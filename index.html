@@ -4,423 +4,246 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Midnight Rain</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Josefin+Sans:wght@100;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Josefin+Sans:wght@100;300&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --ink: #060a10;
-    --deep: #0a1120;
-    --slate: #1a2a40;
-    --steel: #2a3f5c;
-    --mist: #4a6880;
-    --rain: #7aa8c8;
-    --glow: #a8d4f0;
-    --bolt: #e8f4ff;
-    --fog: rgba(120, 170, 210, 0.06);
-  }
+:root {
+  --ink:   #060a10;
+  --deep:  #0a1120;
+  --slate: #1a2a40;
+  --steel: #2a3f5c;
+  --mist:  #4a6880;
+  --rain:  #7aa8c8;
+  --glow:  #a8d4f0;
+}
 
-  html, body {
-    width: 100%; height: 100%;
-    background: var(--ink);
-    overflow: hidden;
-    font-family: 'Josefin Sans', sans-serif;
-    cursor: none;
-  }
+html, body { width:100%; height:100%; background:var(--ink); overflow:hidden; font-family:'Josefin Sans',sans-serif; cursor:none; }
 
-  /* ── Sky canvas ── */
-  #sky {
-    position: fixed; inset: 0;
-    background: linear-gradient(175deg, #040810 0%, #081422 40%, #0d1e35 70%, #0a1828 100%);
-  }
+#sky { position:fixed; inset:0; background:linear-gradient(175deg,#040810 0%,#081422 40%,#0d1e35 70%,#0a1828 100%); transition:background 2.5s ease; }
 
-  /* ── Lightning flash overlay ── */
-  #flash {
-    position: fixed; inset: 0;
-    background: #c8e8ff;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 5;
-    mix-blend-mode: screen;
-  }
+.cloud-layer { position:fixed; width:200%; height:60%; top:-10%; left:-50%; pointer-events:none; z-index:3; animation:cloudDrift 28s ease-in-out infinite alternate; }
+.cloud-layer svg { width:100%; height:100%; }
 
-  /* ── Rain canvas ── */
-  #rain-canvas {
-    position: fixed; inset: 0;
-    z-index: 10;
-    pointer-events: none;
-  }
+#rain-canvas { position:fixed; inset:0; z-index:10; pointer-events:none; }
 
-  /* ── Clouds ── */
-  .cloud-layer {
-    position: fixed;
-    width: 200%;
-    height: 60%;
-    top: -10%;
-    left: -50%;
-    pointer-events: none;
-    z-index: 3;
-  }
-  .cloud-layer svg { width: 100%; height: 100%; }
+.fog { position:fixed; width:200%; height:300px; pointer-events:none; z-index:8; opacity:0.4; }
+.fog-bottom { bottom:-80px; left:-50%; background:radial-gradient(ellipse at center, rgba(26,42,64,0.8) 0%, transparent 70%); animation:driftFog 18s ease-in-out infinite alternate; }
 
-  /* ── UI ── */
-  #ui {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-  }
+/* ── UI ── */
+#ui { position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
-  .title-block {
-    text-align: center;
-    margin-bottom: 52px;
-    animation: fadeUp 2s ease forwards;
-    opacity: 0;
-  }
+.title-block { text-align:center; margin-bottom:40px; animation:fadeUp 2s ease forwards; opacity:0; }
+.eyebrow { font-weight:100; font-size:10px; letter-spacing:0.5em; color:var(--mist); text-transform:uppercase; margin-bottom:12px; }
+h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(46px,7vw,84px); color:var(--glow); letter-spacing:0.04em; line-height:1; text-shadow:0 0 60px rgba(168,212,240,0.2); }
+.subtitle { font-size:11px; font-weight:100; letter-spacing:0.35em; color:var(--mist); margin-top:10px; opacity:0.7; transition:opacity 0.5s; }
 
-  .eyebrow {
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 100;
-    font-size: 10px;
-    letter-spacing: 0.5em;
-    color: var(--mist);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
+/* ── Play button ── */
+#play-btn { width:76px; height:76px; border-radius:50%; border:1px solid rgba(122,168,200,0.35); background:rgba(10,20,40,0.6); backdrop-filter:blur(8px); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.4s ease; animation:fadeUp 2s 0.3s ease forwards; opacity:0; position:relative; }
+#play-btn::before { content:''; position:absolute; inset:-8px; border-radius:50%; border:1px solid rgba(122,168,200,0.12); transition:all 0.4s ease; }
+#play-btn:hover { border-color:rgba(168,212,240,0.7); background:rgba(122,168,200,0.1); box-shadow:0 0 30px rgba(122,168,200,0.15); transform:scale(1.05); }
+#play-btn:hover::before { inset:-14px; opacity:0.5; }
+#play-icon { color:var(--glow); width:22px; height:22px; }
 
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(52px, 8vw, 96px);
-    color: var(--glow);
-    letter-spacing: 0.04em;
-    line-height: 1;
-    text-shadow: 0 0 60px rgba(168, 212, 240, 0.2);
-  }
+/* ── Picker ── */
+.rain-picker { margin-top:40px; display:flex; flex-direction:column; align-items:center; gap:18px; animation:fadeUp 2s 0.5s ease forwards; opacity:0; }
+.picker-label { font-size:9px; letter-spacing:0.45em; color:var(--mist); text-transform:uppercase; }
 
-  .subtitle {
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 100;
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    color: var(--mist);
-    margin-top: 10px;
-    opacity: 0.7;
-  }
+.rain-types { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:500px; }
 
-  /* ── Play button ── */
-  #play-btn {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    border: 1px solid rgba(122, 168, 200, 0.35);
-    background: rgba(10, 20, 40, 0.6);
-    backdrop-filter: blur(8px);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.4s ease;
-    animation: fadeUp 2s 0.3s ease forwards;
-    opacity: 0;
-    position: relative;
-  }
+.rain-type-btn {
+  font-family:'Josefin Sans',sans-serif;
+  font-weight:100;
+  font-size:10px;
+  letter-spacing:0.26em;
+  text-transform:uppercase;
+  color:var(--mist);
+  background:transparent;
+  border:1px solid rgba(74,104,128,0.28);
+  border-radius:2px;
+  padding:9px 16px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  white-space:nowrap;
+}
+.rain-type-btn:hover { color:var(--rain); border-color:rgba(122,168,200,0.5); }
+.rain-type-btn.active {
+  color:var(--glow);
+  border-color:rgba(168,212,240,0.65);
+  background:rgba(122,168,200,0.09);
+  box-shadow:0 0 16px rgba(122,168,200,0.08);
+}
 
-  #play-btn::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    border: 1px solid rgba(122, 168, 200, 0.12);
-    transition: all 0.4s ease;
-  }
+/* ── Volume ── */
+.vol-row { display:flex; align-items:center; gap:16px; }
+.vol-label { font-size:9px; letter-spacing:0.4em; color:var(--mist); text-transform:uppercase; width:52px; text-align:right; }
+input[type=range] { -webkit-appearance:none; appearance:none; width:130px; height:1px; background:var(--steel); outline:none; cursor:pointer; transition:background 0.3s; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:10px; height:10px; border-radius:50%; background:var(--rain); box-shadow:0 0 8px rgba(122,168,200,0.5); transition:all 0.2s; }
+input[type=range]:hover { background:var(--mist); }
+input[type=range]:hover::-webkit-slider-thumb { background:var(--glow); transform:scale(1.3); }
 
-  #play-btn:hover {
-    border-color: rgba(168, 212, 240, 0.7);
-    background: rgba(122, 168, 200, 0.1);
-    box-shadow: 0 0 30px rgba(122, 168, 200, 0.15), inset 0 0 20px rgba(122, 168, 200, 0.05);
-    transform: scale(1.05);
-  }
-  #play-btn:hover::before {
-    inset: -14px;
-    opacity: 0.5;
-  }
+/* ── Status ── */
+#status { position:fixed; bottom:32px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:0.45em; color:rgba(74,104,128,0.5); text-transform:uppercase; animation:pulse 4s ease-in-out infinite; white-space:nowrap; }
 
-  #play-icon {
-    color: var(--glow);
-    transition: all 0.3s;
-    width: 24px; height: 24px;
-  }
+/* ── Cursor ── */
+#cursor { position:fixed; width:6px; height:6px; border-radius:50%; background:rgba(168,212,240,0.6); pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width 0.2s,height 0.2s; mix-blend-mode:screen; }
+#cursor.big { width:30px; height:30px; background:rgba(168,212,240,0.08); border:1px solid rgba(168,212,240,0.35); }
 
-  /* ── Volume slider ── */
-  .controls {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    animation: fadeUp 2s 0.6s ease forwards;
-    opacity: 0;
-  }
-
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .slider-label {
-    font-size: 9px;
-    letter-spacing: 0.4em;
-    color: var(--mist);
-    text-transform: uppercase;
-    width: 64px;
-    text-align: right;
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 140px;
-    height: 1px;
-    background: var(--steel);
-    outline: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--rain);
-    box-shadow: 0 0 8px rgba(122, 168, 200, 0.5);
-    transition: all 0.2s;
-  }
-
-  input[type=range]:hover {
-    background: var(--mist);
-  }
-
-  input[type=range]:hover::-webkit-slider-thumb {
-    background: var(--glow);
-    box-shadow: 0 0 12px rgba(168, 212, 240, 0.7);
-    transform: scale(1.3);
-  }
-
-  /* ── Status ── */
-  #status {
-    position: fixed;
-    bottom: 36px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    letter-spacing: 0.45em;
-    color: rgba(74, 104, 128, 0.5);
-    text-transform: uppercase;
-    animation: pulse 4s ease-in-out infinite;
-  }
-
-  /* ── Custom cursor ── */
-  #cursor {
-    position: fixed;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(168, 212, 240, 0.6);
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s, opacity 0.2s;
-    mix-blend-mode: screen;
-  }
-  #cursor.big {
-    width: 32px; height: 32px;
-    background: rgba(168, 212, 240, 0.1);
-    border: 1px solid rgba(168, 212, 240, 0.4);
-  }
-
-  /* ── Fog layers ── */
-  .fog {
-    position: fixed;
-    width: 200%;
-    height: 300px;
-    pointer-events: none;
-    z-index: 8;
-    opacity: 0.4;
-  }
-  .fog-bottom {
-    bottom: -80px; left: -50%;
-    background: radial-gradient(ellipse at center, rgba(26, 42, 64, 0.8) 0%, transparent 70%);
-    animation: driftFog 18s ease-in-out infinite alternate;
-  }
-
-  /* ── Keyframes ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50%       { opacity: 0.8; }
-  }
-  @keyframes driftFog {
-    from { transform: translateX(0); }
-    to   { transform: translateX(8%); }
-  }
-  @keyframes cloudDrift {
-    from { transform: translateX(0); }
-    to   { transform: translateX(4%); }
-  }
-  @keyframes boltFlash {
-    0%   { opacity: 0; }
-    10%  { opacity: 0.85; }
-    20%  { opacity: 0.2; }
-    30%  { opacity: 0.9; }
-    50%  { opacity: 0; }
-    100% { opacity: 0; }
-  }
+@keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse   { 0%,100%{opacity:0.4} 50%{opacity:0.85} }
+@keyframes driftFog { from{transform:translateX(0)} to{transform:translateX(8%)} }
+@keyframes cloudDrift { from{transform:translateX(0)} to{transform:translateX(4%)} }
 </style>
 </head>
 <body>
 
 <div id="sky"></div>
-<div id="flash"></div>
 
-<!-- Cloud SVG layer -->
-<div class="cloud-layer" style="animation: cloudDrift 28s ease-in-out infinite alternate;">
+<div class="cloud-layer">
   <svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
     <defs>
-      <filter id="blur1"><feGaussianBlur stdDeviation="18"/></filter>
-      <filter id="blur2"><feGaussianBlur stdDeviation="28"/></filter>
-      <filter id="blur3"><feGaussianBlur stdDeviation="10"/></filter>
+      <filter id="b1"><feGaussianBlur stdDeviation="18"/></filter>
+      <filter id="b2"><feGaussianBlur stdDeviation="28"/></filter>
+      <filter id="b3"><feGaussianBlur stdDeviation="10"/></filter>
     </defs>
-    <!-- Deep background clouds -->
-    <ellipse cx="200" cy="120" rx="280" ry="110" fill="#0f1e32" filter="url(#blur2)" opacity="0.95"/>
-    <ellipse cx="700" cy="80" rx="340" ry="130" fill="#0d1c30" filter="url(#blur2)" opacity="0.95"/>
-    <ellipse cx="1100" cy="140" rx="220" ry="100" fill="#0f1e32" filter="url(#blur2)" opacity="0.9"/>
-    <!-- Mid clouds -->
-    <ellipse cx="400" cy="160" rx="200" ry="80" fill="#111e2e" filter="url(#blur1)" opacity="0.9"/>
-    <ellipse cx="900" cy="100" rx="260" ry="95" fill="#10213a" filter="url(#blur1)" opacity="0.85"/>
-    <!-- Foreground wisps -->
-    <ellipse cx="150" cy="200" rx="160" ry="55" fill="#141f30" filter="url(#blur3)" opacity="0.7"/>
-    <ellipse cx="600" cy="230" rx="300" ry="60" fill="#131f31" filter="url(#blur3)" opacity="0.65"/>
-    <ellipse cx="1050" cy="195" rx="180" ry="58" fill="#141f30" filter="url(#blur3)" opacity="0.7"/>
+    <ellipse cx="200"  cy="120" rx="280" ry="110" fill="#0f1e32" filter="url(#b2)" opacity="0.95"/>
+    <ellipse cx="700"  cy="80"  rx="340" ry="130" fill="#0d1c30" filter="url(#b2)" opacity="0.95"/>
+    <ellipse cx="1100" cy="140" rx="220" ry="100" fill="#0f1e32" filter="url(#b2)" opacity="0.9"/>
+    <ellipse cx="400"  cy="160" rx="200" ry="80"  fill="#111e2e" filter="url(#b1)" opacity="0.9"/>
+    <ellipse cx="900"  cy="100" rx="260" ry="95"  fill="#10213a" filter="url(#b1)" opacity="0.85"/>
+    <ellipse cx="150"  cy="200" rx="160" ry="55"  fill="#141f30" filter="url(#b3)" opacity="0.7"/>
+    <ellipse cx="600"  cy="230" rx="300" ry="60"  fill="#131f31" filter="url(#b3)" opacity="0.65"/>
+    <ellipse cx="1050" cy="195" rx="180" ry="58"  fill="#141f30" filter="url(#b3)" opacity="0.7"/>
   </svg>
 </div>
 
 <canvas id="rain-canvas"></canvas>
 <div class="fog fog-bottom"></div>
 
-<!-- UI -->
 <div id="ui">
   <div class="title-block">
-    <p class="eyebrow">Ambient Sound</p>
+    <p class="eyebrow">Ambient Soundscape</p>
     <h1>Midnight Rain</h1>
-    <p class="subtitle">rainfall · looping</p>
+    <p class="subtitle" id="mode-subtitle">select a rain type below</p>
   </div>
 
   <button id="play-btn" aria-label="Play / Pause">
-    <svg id="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="5,3 19,12 5,21" fill="currentColor" stroke="none" id="play-shape"/>
+    <svg id="play-icon" viewBox="0 0 24 24">
+      <polygon points="5,3 19,12 5,21" fill="#a8d4f0" stroke="none"/>
     </svg>
   </button>
 
-  <div class="controls">
-    <div class="slider-row">
-      <span class="slider-label">Rain</span>
-      <input type="range" id="rain-vol" min="0" max="100" value="70">
+  <div class="rain-picker">
+    <p class="picker-label">Rain Type</p>
+    <div class="rain-types">
+      <button class="rain-type-btn active" data-type="drizzle">Drizzle</button>
+      <button class="rain-type-btn" data-type="steady">Steady Rain</button>
+      <button class="rain-type-btn" data-type="shower">Rain Shower</button>
+      <button class="rain-type-btn" data-type="downpour">Downpour</button>
+
+    </div>
+    <div class="vol-row">
+      <span class="vol-label">Volume</span>
+      <input type="range" id="vol" min="0" max="100" value="70">
     </div>
   </div>
 </div>
 
-<p id="status">Click to begin</p>
-
-<!-- Custom cursor -->
+<p id="status">Click play to begin</p>
 <div id="cursor"></div>
 
 <script>
-/* ═══════════════════════════════════════
-   CURSOR
-═══════════════════════════════════════ */
+/* ═══ CURSOR ═══ */
 const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top  = e.clientY + 'px';
-});
-document.querySelectorAll('button, input').forEach(el => {
+document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+document.querySelectorAll('button,input').forEach(el => {
   el.addEventListener('mouseenter', () => cursor.classList.add('big'));
   el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
 });
 
-/* ═══════════════════════════════════════
-   RAIN CANVAS
-═══════════════════════════════════════ */
+/* ═══ RAIN TYPE CONFIGS ═══ */
+const TYPES = {
+  drizzle: {
+    label: 'Light Drizzle',
+    subtitle: 'light drizzle · looping',
+    sky: 'linear-gradient(175deg,#050a12 0%,#091520 40%,#0e1f32 70%,#0b1926 100%)',
+    vis: { count:0.14, speed:[4,8],   len:[7,14],   alpha:[0.04,0.09], w:[0.3,0.55], angle:0.06 },
+    sfx: { boost:0.7,  lp:4000, lpQ:0.4, bp:1200, bpQ:0.3, hp:300,  dropRate:0,  dropAmp:0,    glass:false }
+  },
+  steady: {
+    label: 'Steady Rain',
+    subtitle: 'steady rain · looping',
+    sky: 'linear-gradient(175deg,#040810 0%,#081422 40%,#0d1e35 70%,#0a1828 100%)',
+    vis: { count:0.38, speed:[10,17],  len:[14,25],  alpha:[0.06,0.15], w:[0.5,0.9], angle:0.15 },
+    sfx: { boost:2.2,  lp:4200, lpQ:0.8, bp:1300, bpQ:0.4, hp:280,  dropRate:30, dropAmp:0.06, glass:false }
+  },
+  shower: {
+    label: 'Rain Shower',
+    subtitle: 'rain shower · looping',
+    sky: 'linear-gradient(175deg,#030609 0%,#060e1a 40%,#0b182e 70%,#081320 100%)',
+    vis: { count:0.58, speed:[13,22],  len:[18,34],  alpha:[0.08,0.18], w:[0.55,1.05], angle:0.22 },
+    sfx: { boost:3.2,  lp:3600, lpQ:1.0, bp:980,  bpQ:0.35,hp:160,  dropRate:50, dropAmp:0.09, glass:false }
+  },
+  downpour: {
+    label: 'Heavy Downpour',
+    subtitle: 'heavy downpour · looping',
+    sky: 'linear-gradient(175deg,#020407 0%,#050c16 40%,#091526 70%,#060e1c 100%)',
+    vis: { count:0.95, speed:[20,34],  len:[26,52],  alpha:[0.10,0.26], w:[0.7,1.5], angle:0.30 },
+    sfx: { boost:5.5,  lp:2600, lpQ:1.3, bp:650,  bpQ:0.28,hp:60,   dropRate:90, dropAmp:0.15, glass:false }
+  },
+
+};
+
+/* ═══ CANVAS ═══ */
 const canvas = document.getElementById('rain-canvas');
 const ctx    = canvas.getContext('2d');
-let drops = [];
-let W, H;
+let drops = [], W, H;
+let currentType = 'drizzle';
+let rainAlpha = 0, targetAlpha = 0;
+let lastTime = 0;
 
-function resize() {
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  initDrops();
-}
-
-function initDrops() {
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; buildDrops(); }
+function buildDrops() {
+  const v = TYPES[currentType].vis;
   drops = [];
-  const count = Math.floor(W * 0.55);
-  for (let i = 0; i < count; i++) drops.push(newDrop(true));
+  const n = Math.floor(W * v.count);
+  for (let i=0; i<n; i++) drops.push(mkDrop(v, true));
 }
-
-function newDrop(random) {
-  const speed  = 14 + Math.random() * 12;
-  const length = 18 + Math.random() * 28;
-  const angle  = 0.18; // slight diagonal
+function mkDrop(v, scatter) {
+  const speed  = v.speed[0]  + Math.random()*(v.speed[1]-v.speed[0]);
+  const len    = v.len[0]    + Math.random()*(v.len[1]-v.len[0]);
+  const alpha  = v.alpha[0]  + Math.random()*(v.alpha[1]-v.alpha[0]);
+  const width  = v.w[0]      + Math.random()*(v.w[1]-v.w[0]);
   return {
-    x:      Math.random() * W,
-    y:      random ? Math.random() * H : -length,
-    vx:     Math.sin(angle) * speed * 0.6,
-    vy:     Math.cos(angle) * speed,
-    length,
-    alpha:  0.08 + Math.random() * 0.18,
-    width:  0.5 + Math.random() * 0.7,
+    x:     Math.random()*W,
+    y:     scatter ? Math.random()*H : -len - Math.random()*40,
+    vx:    Math.sin(v.angle)*speed*0.6,
+    vy:    Math.cos(v.angle)*speed,
+    len, alpha, width
   };
 }
 
-let globalRainAlpha = 0; // fade in when playing
-let lastTime = 0;
-
 function drawRain(ts) {
   requestAnimationFrame(drawRain);
-  const dt = Math.min((ts - lastTime) / 16.67, 3);
+  const dt = Math.min((ts-lastTime)/16.67, 3);
   lastTime = ts;
+  // Smooth fade
+  rainAlpha += (targetAlpha - rainAlpha) * 0.05;
+  ctx.clearRect(0,0,W,H);
+  if (rainAlpha < 0.01) return;
 
-  ctx.clearRect(0, 0, W, H);
-  if (globalRainAlpha <= 0) return;
-
+  const v = TYPES[currentType].vis;
   ctx.save();
-  ctx.globalAlpha = globalRainAlpha;
-
+  ctx.globalAlpha = rainAlpha;
   for (let d of drops) {
-    d.x += d.vx * dt;
-    d.y += d.vy * dt;
-    if (d.y > H + 10 || d.x > W + 10) { Object.assign(d, newDrop(false)); d.x = Math.random() * W; }
-
-    const x2 = d.x - d.vx / d.vy * d.length;
-    const y2 = d.y - d.length;
-
-    const g = ctx.createLinearGradient(x2, y2, d.x, d.y);
-    g.addColorStop(0, `rgba(140,190,220,0)`);
-    g.addColorStop(1, `rgba(140,190,220,${d.alpha})`);
-
-    ctx.beginPath();
-    ctx.moveTo(x2, y2);
-    ctx.lineTo(d.x, d.y);
-    ctx.strokeStyle = g;
-    ctx.lineWidth   = d.width;
-    ctx.stroke();
+    d.x += d.vx*dt; d.y += d.vy*dt;
+    if (d.y > H+20 || d.x > W+20) { Object.assign(d, mkDrop(v,false)); d.x = Math.random()*W; }
+    const x2=d.x-d.vx/d.vy*d.len, y2=d.y-d.len;
+    const g=ctx.createLinearGradient(x2,y2,d.x,d.y);
+    g.addColorStop(0,`rgba(155,205,235,0)`);
+    g.addColorStop(1,`rgba(155,205,235,${d.alpha})`);
+    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(d.x,d.y);
+    ctx.strokeStyle=g; ctx.lineWidth=d.width; ctx.stroke();
   }
   ctx.restore();
 }
@@ -429,113 +252,144 @@ window.addEventListener('resize', resize);
 resize();
 requestAnimationFrame(drawRain);
 
-/* ═══════════════════════════════════════
-   AUDIO ENGINE (Web Audio API)
-═══════════════════════════════════════ */
-let actx, rainNode, rainGain, masterGain;
+/* ═══ AUDIO ═══ */
+let actx, masterGain;
 let playing = false;
-let rainVol = 0.70;
+let vol = 0.70;
+let stopHandles = [];   // functions to stop current audio layer
 
-function createRain(actx) {
-  // Brown-ish noise for heavy rain
-  const bufLen  = actx.sampleRate * 4;
-  const buffer  = actx.createBuffer(2, bufLen, actx.sampleRate);
-  for (let c = 0; c < 2; c++) {
-    const data = buffer.getChannelData(c);
-    let last = 0;
-    for (let i = 0; i < bufLen; i++) {
-      const white = Math.random() * 2 - 1;
-      last = (last + 0.03 * white) / 1.03;
-      data[i] = last * 3.5; // boost
-    }
-  }
-
-  const src = actx.createBufferSource();
-  src.buffer = buffer;
-  src.loop   = true;
-
-  // Low-pass → band-pass for rain texture
-  const lp = actx.createBiquadFilter();
-  lp.type = 'lowpass'; lp.frequency.value = 4200; lp.Q.value = 0.8;
-
-  const bp = actx.createBiquadFilter();
-  bp.type = 'bandpass'; bp.frequency.value = 1100; bp.Q.value = 0.3;
-
-  const hp = actx.createBiquadFilter();
-  hp.type = 'highpass'; hp.frequency.value = 200;
-
-  src.connect(hp); hp.connect(lp); lp.connect(bp);
-  return { node: src, output: bp };
+function stopAll() {
+  stopHandles.forEach(fn => fn());
+  stopHandles = [];
 }
 
-async function startAudio() {
+function buildAudio(type) {
+  const s = TYPES[type].sfx;
+  const layerGain = actx.createGain();
+  layerGain.gain.setValueAtTime(0, actx.currentTime);
+  layerGain.connect(masterGain);
+
+  let alive = true;
+
+  // ── Noise wash ──
+  const bufLen = actx.sampleRate * 8;
+  const buf = actx.createBuffer(2, bufLen, actx.sampleRate);
+  for (let c=0; c<2; c++) {
+    const d = buf.getChannelData(c);
+    let last = 0;
+    for (let i=0; i<bufLen; i++) { const w=Math.random()*2-1; last=(last+0.03*w)/1.03; d[i]=last*s.boost; }
+  }
+  const noise = actx.createBufferSource(); noise.buffer = buf; noise.loop = true;
+  const hp = actx.createBiquadFilter(); hp.type='highpass';  hp.frequency.value = s.hp;
+  const lp = actx.createBiquadFilter(); lp.type='lowpass';   lp.frequency.value = s.lp; lp.Q.value = s.lpQ;
+  const bp = actx.createBiquadFilter(); bp.type='bandpass';  bp.frequency.value = s.bp; bp.Q.value = s.bpQ;
+  noise.connect(hp); hp.connect(lp); lp.connect(bp); bp.connect(layerGain);
+  noise.start();
+
+  // ── Drop impulses ──
+  function dropTick() {
+    if (!alive || s.dropRate === 0) return;
+    const t = actx.currentTime;
+    const osc = actx.createOscillator();
+    const env = actx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(s.bp*(0.75+Math.random()*0.7), t);
+    osc.frequency.exponentialRampToValueAtTime(s.bp*0.25, t+0.1);
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(s.dropAmp*(0.4+Math.random()*0.9), t+0.004);
+    env.gain.exponentialRampToValueAtTime(0.0001, t+0.1+Math.random()*0.12);
+    osc.connect(env); env.connect(layerGain);
+    osc.start(t); osc.stop(t+0.25);
+    const interval = (1000/s.dropRate)*(0.3+Math.random()*1.5);
+    setTimeout(dropTick, interval);
+  }
+  dropTick();
+
+  // ── Glass taps (window mode) ──
+  function glassTap() {
+    if (!alive) return;
+    const t = actx.currentTime;
+    const osc = actx.createOscillator(); osc.type='sine';
+    osc.frequency.value = 1600 + Math.random()*1200;
+    const env = actx.createGain();
+    env.gain.setValueAtTime(0,t);
+    env.gain.linearRampToValueAtTime(0.1+Math.random()*0.14, t+0.003);
+    env.gain.exponentialRampToValueAtTime(0.0001, t+0.05+Math.random()*0.07);
+    osc.connect(env); env.connect(layerGain);
+    osc.start(t); osc.stop(t+0.15);
+    setTimeout(glassTap, 250+Math.random()*2200);
+  }
+  if (s.glass) glassTap();
+
+  // Fade in
+  layerGain.gain.setTargetAtTime(1, actx.currentTime, 0.7);
+
+  // Return stop function
+  return function stop() {
+    alive = false;
+    layerGain.gain.setTargetAtTime(0, actx.currentTime, 0.5);
+    setTimeout(() => { try { noise.stop(); layerGain.disconnect(); } catch(e){} }, 2000);
+  };
+}
+
+async function ensureAudio() {
   if (actx) return;
   actx = new (window.AudioContext || window.webkitAudioContext)();
   await actx.resume();
-
-  masterGain = actx.createGain(); masterGain.gain.value = 1;
-  rainGain   = actx.createGain(); rainGain.gain.value   = rainVol;
-
-  const { node, output } = createRain(actx);
-  rainNode = node;
-  output.connect(rainGain);
-  rainGain.connect(masterGain);
+  masterGain = actx.createGain(); masterGain.gain.value = vol;
   masterGain.connect(actx.destination);
-
-  rainNode.start();
 }
 
-/* ═══════════════════════════════════════
-   CONTROLS
-═══════════════════════════════════════ */
-const playBtn  = document.getElementById('play-btn');
-const playShape = document.getElementById('play-shape');
-const status   = document.getElementById('status');
+/* ═══ CONTROLS ═══ */
+const playBtn = document.getElementById('play-btn');
+const status  = document.getElementById('status');
+const subtitle = document.getElementById('mode-subtitle');
 
-const PAUSE_PATH = 'M6,4 h4 v16 h-4z M14,4 h4 v16 h-4z';
-const PLAY_PATH  = 'M5,3 L19,12 L5,21z';
-
-function setPaused() {
-  playing = false;
-  playShape.setAttribute('points', '5,3 19,12 5,21');
-  if (rainGain)    rainGain.gain.setTargetAtTime(0, actx.currentTime, 0.6);
-  if (masterGain)  masterGain.gain.setTargetAtTime(0, actx.currentTime, 0.5);
-  globalRainAlpha = 0;
-  status.textContent = 'Paused';
-}
-
-function setPlaying() {
-  playing = true;
-  // Pause icon via polygon points trick — switch to two rects via SVG
-  playShape.outerHTML; // rebuild via innerHTML of parent
-  playBtn.querySelector('svg').innerHTML = `
-    <rect x="5" y="3" width="4" height="18" fill="currentColor" rx="1" id="play-shape"/>
-    <rect x="15" y="3" width="4" height="18" fill="currentColor" rx="1"/>
-  `;
-  if (rainGain)   rainGain.gain.setTargetAtTime(rainVol, actx.currentTime, 0.8);
-  if (masterGain) masterGain.gain.setTargetAtTime(1, actx.currentTime, 0.6);
-  globalRainAlpha = 1;
-  status.textContent = 'Playing · Rain';
+function setIcon(showPlay) {
+  playBtn.querySelector('svg').innerHTML = showPlay
+    ? `<polygon points="5,3 19,12 5,21" fill="#a8d4f0" stroke="none"/>`
+    : `<rect x="5" y="3" width="4" height="18" fill="#a8d4f0" rx="1"/>
+       <rect x="15" y="3" width="4" height="18" fill="#a8d4f0" rx="1"/>`;
 }
 
 playBtn.addEventListener('click', async () => {
-  await startAudio();
-  if (playing) {
-    setPaused();
+  await ensureAudio();
+  if (!playing) {
+    playing = true; targetAlpha = 1;
+    setIcon(false);
+    stopHandles.push(buildAudio(currentType));
+    status.textContent = 'Playing · ' + TYPES[currentType].label;
   } else {
-    if (!playing) {
-      playBtn.querySelector('svg').innerHTML = `
-        <rect x="5" y="3" width="4" height="18" fill="currentColor" rx="1"/>
-        <rect x="15" y="3" width="4" height="18" fill="currentColor" rx="1"/>
-      `;
-    }
-    setPlaying();
+    playing = false; targetAlpha = 0;
+    setIcon(true);
+    stopAll();
+    status.textContent = 'Paused';
   }
 });
 
-document.getElementById('rain-vol').addEventListener('input', e => {
-  rainVol = e.target.value / 100;
-  if (rainGain && playing) rainGain.gain.setTargetAtTime(rainVol, actx.currentTime, 0.1);
+document.querySelectorAll('.rain-type-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    await ensureAudio();
+    document.querySelectorAll('.rain-type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const type = btn.dataset.type;
+    currentType = type;
+    // update visuals
+    document.getElementById('sky').style.background = TYPES[type].sky;
+    subtitle.textContent = TYPES[type].subtitle;
+    buildDrops();
+    // swap audio if playing
+    if (playing) {
+      stopAll();
+      stopHandles.push(buildAudio(type));
+      status.textContent = 'Playing · ' + TYPES[type].label;
+    }
+  });
+});
+
+document.getElementById('vol').addEventListener('input', e => {
+  vol = e.target.value / 100;
+  if (masterGain) masterGain.gain.setTargetAtTime(vol, actx.currentTime, 0.1);
 });
 </script>
 </body>
