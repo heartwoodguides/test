@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Heartwood Guides</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=Libre+Franklin:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg-deep:#0a0c08;--bg-mid:#111408;--bg-card:#161a10;--bg-card-hover:#1d2215;
+  --border:#252e18;--border-glow:#3d5020;--gold:#c9941a;--gold-light:#e8b94a;
+  --gold-dim:#7a5710;--green:#5a8a2a;--green-bright:#7ec83a;--green-dim:#2e4a14;
+  --text:#e8dfc8;--text-sec:#a09070;--text-dim:#584e38;--red:#8b2a1a;
+  --sidebar-w:240px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;height:100%}
+body{
+  background:var(--bg-deep);color:var(--text);
+  font-family:'Libre Franklin',sans-serif;font-size:15px;line-height:1.6;
+  display:flex;min-height:100vh;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.4;
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  position:fixed;top:0;left:0;bottom:0;
+  background:var(--bg-mid);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:200;overflow:hidden;
+}
+.sidebar::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(90,138,42,.05) 0%,transparent 40%,rgba(201,148,26,.04) 100%);
+  pointer-events:none;
+}
+
+.sb-brand{padding:30px 28px 24px;border-bottom:1px solid var(--border)}
+.sb-eyebrow{
+  font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--green);margin-bottom:8px;font-weight:600;
+}
+.sb-title{
+  font-family:'Fraunces',Georgia,serif;font-size:1.7rem;font-weight:900;
+  line-height:1;color:var(--gold-light);
+  text-shadow:0 0 40px rgba(201,148,26,.3);
+}
+.sb-title em{color:var(--green-bright);font-style:normal}
+.sb-sub{
+  font-size:.72rem;color:var(--text-dim);margin-top:6px;
+  font-weight:300;letter-spacing:.03em;font-style:italic;
+}
+
+.sb-nav{padding:20px 0;flex:1}
+.sb-section-label{
+  font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-dim);padding:0 28px;margin-bottom:6px;font-weight:600;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 28px;
+  color:var(--text-sec);text-decoration:none;
+  font-size:.82rem;font-weight:500;letter-spacing:.02em;
+  transition:all .18s;border-left:2px solid transparent;
+  cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;
+  width:100%;text-align:left;
+}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.sb-link.active{color:var(--gold-light);border-left-color:var(--gold);background:rgba(201,148,26,.06)}
+.sb-link .icon{font-size:.9rem;width:16px;text-align:center;flex-shrink:0}
+.sb-divider{height:1px;background:var(--border);margin:12px 28px}
+
+.sb-discord{
+  margin:20px;padding:14px;
+  background:rgba(90,138,42,.08);
+  border:1px solid var(--green-dim);border-radius:4px;
+  font-size:.75rem;color:var(--text-sec);line-height:1.5;
+}
+.sb-discord a{
+  display:inline-flex;align-items:center;gap:5px;
+  color:var(--green-bright);text-decoration:none;font-weight:600;
+  font-size:.72rem;margin-top:6px;
+}
+.sb-discord a:hover{color:var(--gold-light)}
+
+/* ══════════════════════════════════════
+   MAIN
+══════════════════════════════════════ */
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
+
+/* ── HERO ── */
+.hero{
+  position:relative;overflow:hidden;
+  padding:0;
+  background:var(--bg-deep);
+  border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1fr 420px;
+  min-height:420px;
+}
+.hero-content{
+  padding:56px 60px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 20% 50%,rgba(90,138,42,.09) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:16px;
+}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--gold)}
+.hero-kicker{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:clamp(2.4rem,4vw,3.6rem);
+  font-weight:900;line-height:1.05;
+  color:var(--text);margin-bottom:16px;
+  letter-spacing:-.02em;
+}
+.hero-kicker span{color:var(--gold-light)}
+.hero-lead{
+  color:var(--text-sec);font-size:.95rem;
+  max-width:440px;line-height:1.7;margin-bottom:28px;
+  font-style:italic;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);color:#0a0c08;
+  font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:11px 24px;border-radius:2px;
+  border:none;cursor:pointer;text-decoration:none;
+  transition:all .2s;
+  font-family:'Libre Franklin',sans-serif;
+}
+.hero-cta:hover{background:var(--gold-light);transform:translateX(3px)}
+.hero-cta::after{content:'→'}
+
+.hero-featured{
+  position:relative;cursor:pointer;overflow:hidden;
+  border-left:1px solid var(--border);
+}
+.hero-featured img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;filter:brightness(.7);
+  transition:filter .4s,transform .5s;
+}
+.hero-featured:hover img{filter:brightness(.85);transform:scale(1.03)}
+.hero-featured-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(10,12,8,.7) 0%,transparent 60%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:28px;
+}
+.hfo-badge{
+  font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:8px;
+}
+.hfo-title{
+  font-family:'Fraunces',Georgia,serif;font-size:1.1rem;
+  font-weight:700;color:#fff;line-height:1.3;margin-bottom:12px;
+}
+.hfo-play{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--text-sec);font-size:.72rem;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.hfo-play-icon{
+  width:32px;height:32px;background:rgba(201,148,26,.9);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s;flex-shrink:0;
+}
+.hero-featured:hover .hfo-play-icon{transform:scale(1.15)}
+.hfo-play-icon::after{
+  content:'';border-left:10px solid #0a0c08;
+  border-top:6px solid transparent;border-bottom:6px solid transparent;margin-left:2px;
+}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 60px;border-bottom:1px solid var(--border);
+  background:rgba(10,12,8,.7);backdrop-filter:blur(8px);
+  position:sticky;top:0;z-index:100;flex-wrap:wrap;
+}
+.toolbar-filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-pill{
+  font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  padding:5px 14px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--text-dim);cursor:pointer;
+  transition:all .2s;font-family:'Libre Franklin',sans-serif;
+}
+.filter-pill:hover{border-color:var(--border-glow);color:var(--text-sec)}
+.filter-pill.active{
+  background:var(--green-dim);border-color:var(--green);
+  color:var(--green-bright);
+}
+.filter-pill[data-f="Combat"].active{background:rgba(139,42,26,.25);border-color:rgba(139,42,26,.6);color:#e07060}
+.filter-pill[data-f="Money"].active{background:rgba(201,148,26,.12);border-color:var(--gold-dim);color:var(--gold-light)}
+.filter-pill[data-f="Skilling"].active{background:rgba(60,100,160,.15);border-color:rgba(60,100,160,.5);color:#88aadd}
+
+.toolbar-search{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:20px;padding:6px 14px;transition:border .2s;
+}
+.toolbar-search:focus-within{border-color:var(--border-glow)}
+.toolbar-search input{
+  background:none;border:none;outline:none;
+  color:var(--text);font-family:'Libre Franklin',sans-serif;
+  font-size:.82rem;width:180px;
+}
+.toolbar-search input::placeholder{color:var(--text-dim)}
+.toolbar-search span{color:var(--text-dim);font-size:.85rem}
+
+/* ── CONTENT AREA ── */
+.content{padding:48px 60px 80px}
+
+/* Section headers */
+.sec-head{
+  display:flex;align-items:baseline;gap:16px;margin-bottom:28px;
+}
+.sec-head h2{
+  font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:700;
+  color:var(--text);letter-spacing:-.01em;
+  font-style:italic;
+}
+.sec-head-count{
+  font-size:.72rem;color:var(--text-dim);letter-spacing:.1em;
+  text-transform:uppercase;font-weight:600;
+}
+.sec-rule{flex:1;height:1px;background:var(--border);margin-left:8px}
+
+/* ── GUIDE ROWS (editorial list) ── */
+.guide-list{display:flex;flex-direction:column;gap:1px;margin-bottom:56px}
+
+.guide-row{
+  display:grid;grid-template-columns:52px 80px 1fr auto;
+  align-items:center;gap:0;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+  text-decoration:none;color:inherit;
+  transition:all .2s;cursor:pointer;
+  position:relative;
+}
+.guide-row + .guide-row{margin-top:4px}
+.guide-row::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--green);opacity:0;transition:opacity .2s;
+}
+.guide-row:hover{background:var(--bg-card-hover);border-color:var(--border-glow)}
+.guide-row:hover::after{opacity:1}
+.guide-row.hidden{display:none}
+
+.gr-num{
+  font-family:'Fraunces',Georgia,serif;font-size:1.1rem;
+  font-weight:700;color:var(--text-dim);
+  padding:0 16px;text-align:center;
+  border-right:1px solid var(--border);
+  font-style:italic;
+  align-self:stretch;display:flex;align-items:center;justify-content:center;
+}
+.gr-thumb{
+  position:relative;overflow:hidden;align-self:stretch;
+  border-right:1px solid var(--border);
+}
+.gr-thumb img{
+  width:80px;height:100%;min-height:60px;object-fit:cover;
+  display:block;filter:brightness(.75);
+  transition:filter .25s;
+}
+.guide-row:hover .gr-thumb img{filter:brightness(1)}
+.gr-play-micro{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;background:rgba(0,0,0,.3);
+}
+.guide-row:hover .gr-play-micro{opacity:1}
+.gr-play-micro::after{
+  content:'';width:0;height:0;
+  border-left:10px solid rgba(201,148,26,.95);
+  border-top:6px solid transparent;border-bottom:6px solid transparent;
+  margin-left:3px;
+}
+
+.gr-body{padding:14px 22px;min-width:0}
+.gr-meta{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.gr-tag{
+  font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  padding:2px 8px;border-radius:2px;flex-shrink:0;
+}
+.gr-date{font-size:.72rem;color:var(--text-dim)}
+.gr-title{
+  font-family:'Fraunces',Georgia,serif;font-size:1.05rem;font-weight:700;
+  color:var(--text);line-height:1.3;margin-bottom:3px;
+  transition:color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.guide-row:hover .gr-title{color:var(--gold-light)}
+.gr-desc{font-size:.8rem;color:var(--text-sec);font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.gr-action{
+  padding:0 24px;
+  display:flex;align-items:center;gap:8px;
+  color:var(--text-dim);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;font-weight:600;flex-shrink:0;
+  transition:color .2s;
+}
+.guide-row:hover .gr-action{color:var(--gold-light)}
+.gr-arrow{font-size:1rem;transition:transform .2s}
+.guide-row:hover .gr-arrow{transform:translateX(3px)}
+
+.no-results{
+  text-align:center;padding:60px 0;color:var(--text-dim);
+  font-style:italic;display:none;
+}
+
+/* ── WRITTEN GUIDES ── */
+.written-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;
+}
+
+details.wg{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;
+  transition:border-color .2s;
+}
+details.wg:hover,details.wg[open]{border-color:var(--border-glow)}
+details.wg[open]{grid-column:1/-1;background:var(--bg-card-hover)}
+
+details.wg summary{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 22px;cursor:pointer;list-style:none;user-select:none;
+}
+details.wg summary::-webkit-details-marker{display:none}
+
+.wg-icon{
+  width:36px;height:36px;background:var(--green-dim);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;transition:background .2s;
+}
+details.wg:hover .wg-icon,details.wg[open] .wg-icon{background:rgba(90,138,42,.3)}
+.wg-text{flex:1;min-width:0}
+.wg-label{
+  font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--green-bright);font-weight:700;margin-bottom:3px;
+}
+.wg-name{
+  font-family:'Fraunces',Georgia,serif;font-size:1rem;font-weight:700;
+  color:var(--text);line-height:1.2;transition:color .2s;
+}
+details.wg:hover .wg-name,details.wg[open] .wg-name{color:var(--gold-light)}
+.wg-author{font-size:.72rem;color:var(--text-dim);flex-shrink:0}
+.wg-chev{
+  color:var(--text-dim);flex-shrink:0;font-size:.9rem;
+  transition:transform .25s;
+}
+details.wg[open] .wg-chev{transform:rotate(180deg)}
+
+.wg-body{
+  border-top:1px solid var(--border);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;
+}
+details.wg:not([open]) .wg-body{display:none}
+
+.wg-col{padding:24px 28px}
+.wg-col + .wg-col{border-left:1px solid var(--border)}
+
+.wg-h{
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin-bottom:12px;
+}
+.wg-p{
+  color:var(--text-sec);font-size:.9rem;line-height:1.75;margin-bottom:10px;
+}
+.wg-ul{
+  padding-left:16px;color:var(--text-sec);font-size:.9rem;
+  line-height:1.8;margin-bottom:10px;
+}
+.wg-ul li::marker{color:var(--green)}
+
+.wg-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.wg-table th{
+  font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);padding:7px 10px;text-align:left;
+  border-bottom:1px solid var(--border-glow);font-weight:700;
+}
+.wg-table td{
+  padding:7px 10px;color:var(--text-sec);
+  border-bottom:1px solid rgba(37,46,24,.5);
+}
+.wg-table tbody tr:last-child td{border-bottom:none}
+.wg-table tbody tr:hover td{background:rgba(255,255,255,.015)}
+.wg-lvl{font-family:'Fraunces',Georgia,serif;font-size:.85rem;color:var(--green-bright);font-weight:700}
+.wg-note{font-style:italic;color:var(--text-dim);font-size:.82rem}
+
+.wg-tip{
+  display:flex;gap:10px;background:rgba(90,138,42,.06);
+  border:1px solid var(--green-dim);border-radius:3px;
+  padding:12px 14px;font-size:.85rem;color:var(--text-sec);
+  font-style:italic;line-height:1.6;margin-top:12px;
+}
+.wg-tip::before{content:'💡';flex-shrink:0}
+
+.wg-badge-hc{
+  display:inline-block;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 7px;border-radius:2px;
+  background:rgba(201,148,26,.12);border:1px solid var(--gold-dim);color:var(--gold-light);
+  vertical-align:middle;
+}
+.wg-atlas-link{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:16px;font-size:.78rem;
+  color:var(--green-bright);text-decoration:none;border-bottom:1px solid var(--green-dim);
+  padding-bottom:1px;transition:color .2s,border-color .2s;
+}
+.wg-atlas-link:hover{color:var(--gold-light);border-color:var(--gold-dim)}
+
+/* tags shared */
+.tag-combat{background:rgba(139,42,26,.28);color:#e07060;border:1px solid rgba(139,42,26,.45)}
+.tag-money{background:rgba(201,148,26,.18);color:var(--gold-light);border:1px solid var(--gold-dim)}
+.tag-skilling{background:rgba(60,100,160,.2);color:#88aadd;border:1px solid rgba(60,100,160,.4)}
+.tag-guide{background:rgba(90,138,42,.22);color:var(--green-bright);border:1px solid rgba(90,138,42,.4)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:var(--bg-card);border:1px solid var(--border-glow);
+  border-radius:6px;overflow:hidden;max-width:900px;width:100%;
+  position:relative;transform:translateY(20px);transition:transform .25s;
+}
+.modal-overlay.open .modal-box{transform:translateY(0)}
+.modal-ratio{position:relative;padding-bottom:56.25%;height:0}
+.modal-ratio iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.modal-close{
+  position:absolute;top:12px;right:12px;
+  width:32px;height:32px;background:var(--bg-deep);
+  border:1px solid var(--border);border-radius:50%;
+  color:var(--text-sec);font-size:.85rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:10;
+}
+.modal-close:hover{color:#fff;border-color:var(--gold-dim)}
+
+/* ── ANIMATIONS ── */
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.guide-row{animation:slideIn .35s ease both}
+.guide-row:nth-child(1){animation-delay:.04s}.guide-row:nth-child(2){animation-delay:.08s}
+.guide-row:nth-child(3){animation-delay:.12s}.guide-row:nth-child(4){animation-delay:.16s}
+.guide-row:nth-child(5){animation-delay:.20s}.guide-row:nth-child(6){animation-delay:.24s}
+.guide-row:nth-child(7){animation-delay:.28s}.guide-row:nth-child(8){animation-delay:.32s}
+.guide-row:nth-child(9){animation-delay:.36s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sidebar-w:0px}
+  .sidebar{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-featured{display:none}
+  .toolbar{padding:12px 24px}
+  .content{padding:32px 24px 60px}
+  .hero-content{padding:40px 24px}
+  .wg-body{grid-template-columns:1fr}
+  .wg-col + .wg-col{border-left:none;border-top:1px solid var(--border)}
+  .guide-row{grid-template-columns:44px 70px 1fr auto}
+}
+@media(max-width:600px){
+  .guide-row{grid-template-columns:40px 1fr auto}
+  .gr-thumb{display:none}
+  .gr-action{padding:0 14px}
+  .written-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <p class="sb-eyebrow">Community Crafted</p>
+    <div class="sb-title">Heart<em>wood</em></div>
+    <div class="sb-sub">Guides &amp; Walkthroughs</div>
+  </div>
+
+  <nav class="sb-nav">
+    <p class="sb-section-label">Browse</p>
+    <button class="sb-link active" data-f="All" onclick="setFilter(this)">
+      <span class="icon">📜</span> All Guides
+    </button>
+    <button class="sb-link" data-f="Combat" onclick="setFilter(this)">
+      <span class="icon">⚔️</span> Combat
+    </button>
+    <button class="sb-link" data-f="Money" onclick="setFilter(this)">
+      <span class="icon">💰</span> Money Makers
+    </button>
+    <button class="sb-link" data-f="Skilling" onclick="setFilter(this)">
+      <span class="icon">🪵</span> Skilling
+    </button>
+    <button class="sb-link" data-f="Guide" onclick="setFilter(this)">
+      <span class="icon">🗺️</span> Guides
+    </button>
+
+    <div class="sb-divider"></div>
+    <p class="sb-section-label">Links</p>
+    <a class="sb-link" href="https://discord.gg/cRA8Xm2zD2" target="_blank">
+      <span class="icon">💬</span> Discord
+    </a>
+    <a class="sb-link" href="https://heartwoodonline.com" target="_blank">
+      <span class="icon">🌿</span> Play the Game
+    </a>
+  </nav>
+
+  <div class="sb-discord">
+    More tips &amp; live help in our community.
+    <br/>
+    <a href="https://discord.gg/cRA8Xm2zD2" target="_blank">Join Discord ↗</a>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Featured Guide</div>
+      <h1 class="hero-kicker">Master <span>Heartwood</span> from Level One</h1>
+      <p class="hero-lead">Community-crafted guides covering combat, skilling, money-making and more. Everything you need to thrive in Heartwood Online.</p>
+      <a href="#" class="hero-cta" onclick="openModal('cDULmT1YcDM');return false;">Watch Combat Guide</a>
+    </div>
+    <div class="hero-featured" onclick="openModal('cDULmT1YcDM')">
+      <img src="https://img.youtube.com/vi/cDULmT1YcDM/maxresdefault.jpg" alt="Ultimate Combat Guide" loading="lazy"/>
+      <div class="hero-featured-overlay">
+        <div class="hfo-badge">★ Featured · By Jord</div>
+        <div class="hfo-title">Ultimate Heartwood Online Combat Guide · Level 1–50</div>
+        <div class="hfo-play">
+          <div class="hfo-play-icon"></div>
+          Watch now
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-filters">
+      <button class="filter-pill active" data-f="All" onclick="setFilter(this)">All</button>
+      <button class="filter-pill" data-f="Combat" onclick="setFilter(this)">Combat</button>
+      <button class="filter-pill" data-f="Money" onclick="setFilter(this)">Money</button>
+      <button class="filter-pill" data-f="Skilling" onclick="setFilter(this)">Skilling</button>
+      <button class="filter-pill" data-f="Guide" onclick="setFilter(this)">Guides</button>
+    </div>
+    <div class="toolbar-search">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search guides…" oninput="filterRows()"/>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- VIDEO GUIDES -->
+    <div class="sec-head">
+      <h2>Video Guides</h2>
+      <span class="sec-head-count" id="visCount">9 guides</span>
+      <div class="sec-rule"></div>
+    </div>
+
+    <div class="guide-list" id="grid">
+
+      <a class="guide-row" data-cat="Combat" data-title="ultimate heartwood online combat guide jord"
+         href="#" onclick="openModal('cDULmT1YcDM');return false;">
+        <div class="gr-num">01</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/cDULmT1YcDM/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-combat">Combat</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Ultimate Heartwood Online Combat Guide</div>
+          <div class="gr-desc">Level 1–50 walkthrough — what to kill and where to go. By Jord.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Money" data-title="how much can you make killing silkworms money maker"
+         href="#" onclick="openModal('s30La5wFfsY');return false;">
+        <div class="gr-num">02</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/s30La5wFfsY/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-money">Money Maker</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">How Much Can You Make Killing Silkworms?</div>
+          <div class="gr-desc">Testing silkworm profits — is it worth your time?</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Money" data-title="killing yellow hats 1 hour money"
+         href="#" onclick="openModal('06IY-NpMFU4');return false;">
+        <div class="gr-num">03</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/06IY-NpMFU4/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-money">Money Maker</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Killing Yellow Hats for 1 Hour!</div>
+          <div class="gr-desc">Full hour of yellow hat grinding — here's the final gold count.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Skilling" data-title="where to chop all trees woodcutting skilling"
+         href="#" onclick="openModal('uFSELw1lMLM');return false;">
+        <div class="gr-num">04</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/uFSELw1lMLM/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-skilling">Skilling</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Where To Chop All Trees in Game</div>
+          <div class="gr-desc">Every tree location in Heartwood Online — quick visual tour.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Guide" data-title="how to use bulk market trading one"
+         href="#" onclick="openModal('01Plp1MWj_0');return false;">
+        <div class="gr-num">05</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/01Plp1MWj_0/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-guide">Guide</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">How To Use the Bulk Market!</div>
+          <div class="gr-desc">Beginner-friendly walkthrough of the Bulk Market. By One.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Guide" data-title="best gin berry farming spot one"
+         href="#" onclick="openModal('z5wMUNou_EY');return false;">
+        <div class="gr-num">06</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/z5wMUNou_EY/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-guide">Guide</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Best Gin Berry Farming Spot</div>
+          <div class="gr-desc">One reveals the top gin berry location in the game.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Guide" data-title="number 1 turnip farming spot one"
+         href="#" onclick="openModal('nAaeextA-BI');return false;">
+        <div class="gr-num">07</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/nAaeextA-BI/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-guide">Guide</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">#1 Turnip Farming Spot</div>
+          <div class="gr-desc">One shows the absolute best place to farm turnips.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Guide" data-title="best coal farming spot mining one"
+         href="#" onclick="openModal('qkdJ-BixxJE');return false;">
+        <div class="gr-num">08</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/qkdJ-BixxJE/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-guide">Guide</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Best Coal Farming Spot</div>
+          <div class="gr-desc">One shows where to mine coal as efficiently as possible.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+      <a class="guide-row" data-cat="Guide" data-title="best cotton farming spot one"
+         href="#" onclick="openModal('PKiL_8fjI4s');return false;">
+        <div class="gr-num">09</div>
+        <div class="gr-thumb">
+          <img src="https://img.youtube.com/vi/PKiL_8fjI4s/hqdefault.jpg" alt="" loading="lazy"/>
+          <div class="gr-play-micro"></div>
+        </div>
+        <div class="gr-body">
+          <div class="gr-meta">
+            <span class="gr-tag tag-guide">Guide</span>
+            <span class="gr-date">Mar 3, 2026</span>
+          </div>
+          <div class="gr-title">Best Cotton Farming Spot</div>
+          <div class="gr-desc">One reveals where to farm cotton quickly and efficiently.</div>
+        </div>
+        <div class="gr-action">Watch <span class="gr-arrow">→</span></div>
+      </a>
+
+    </div>
+    <p class="no-results" id="noResults">No guides found — try a different search or category.</p>
+
+    <!-- WRITTEN GUIDES -->
+    <div class="sec-head" style="margin-top:16px">
+      <h2>Written Guides</h2>
+      <div class="sec-rule"></div>
+    </div>
+
+    <div class="written-grid">
+
+      <!-- Carpentry -->
+      <details class="wg">
+        <summary>
+          <div class="wg-icon">🪚</div>
+          <div class="wg-text">
+            <div class="wg-label">Skilling</div>
+            <div class="wg-name">Carpentry General Guide</div>
+          </div>
+          <span class="wg-author">By Ninia</span>
+          <span class="wg-chev">▾</span>
+        </summary>
+        <div class="wg-body">
+          <div class="wg-col">
+            <div class="wg-h">Levelling Path</div>
+            <table class="wg-table">
+              <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Oak Boards / Oak Buckler</td><td class="wg-lvl">5</td><td></td></tr>
+                <tr><td>Pine Boards</td><td class="wg-lvl">10</td><td class="wg-note">Hoard until bucklers</td></tr>
+                <tr><td>Pine Buckler</td><td class="wg-lvl">15</td><td></td></tr>
+                <tr><td>Birch Boards</td><td class="wg-lvl">20</td><td class="wg-note">Hoard until bucklers</td></tr>
+                <tr><td>Birch Buckler</td><td class="wg-lvl">25</td><td></td></tr>
+                <tr><td>Maple Boards</td><td class="wg-lvl">30</td><td class="wg-note">Hoard until bucklers</td></tr>
+                <tr><td>Maple Buckler</td><td class="wg-lvl">35</td><td></td></tr>
+                <tr><td>Mandrove Boards</td><td class="wg-lvl">40</td><td class="wg-note">Hoard until bucklers</td></tr>
+                <tr><td>Mandrove Buckler</td><td class="wg-lvl">45</td><td></td></tr>
+                <tr><td>Mandrove Boards / Buckler</td><td class="wg-lvl">50</td><td></td></tr>
+                <tr><td>Mandrove Buckler</td><td class="wg-lvl">55–56</td><td></td></tr>
+                <tr><td><span class="wg-badge-hc">HC</span> Sparkling Lasher · Pearl Wand · Shiny Scale Shield</td><td class="wg-lvl">61</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="wg-col">
+            <div class="wg-h">Tips</div>
+            <div class="wg-tip">Hoard all boards rather than selling — you'll need them to craft the bucklers at the next tier.</div>
+            <a class="wg-atlas-link" href="https://heartwoodatlas.com/en/home/crafting/carpentry" target="_blank">
+              Heartwood Atlas — Carpentry ↗
+            </a>
+          </div>
+        </div>
+      </details>
+
+      <!-- Leatherworking -->
+      <details class="wg">
+        <summary>
+          <div class="wg-icon">🧵</div>
+          <div class="wg-text">
+            <div class="wg-label">Skilling</div>
+            <div class="wg-name">Leatherworking Guide</div>
+          </div>
+          <span class="wg-author">By Akor</span>
+          <span class="wg-chev">▾</span>
+        </summary>
+        <div class="wg-body">
+          <div class="wg-col">
+            <div class="wg-h">Getting Started</div>
+            <p class="wg-p">If you're a fresh Rogue, keep every <strong>Rodent Pelt</strong> and <strong>Soft Hide</strong> you find. At <strong>character level 12</strong> you can begin Leatherworking — craft everything into Flimsy Leather until level 5, then start making armour.</p>
+            <div class="wg-h">Levels 1–5 · Flimsy Leather</div>
+            <table class="wg-table">
+              <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+              <tbody>
+                <tr><td>Flimsy Leather</td><td class="wg-note">2 Rodent Pelts</td></tr>
+                <tr><td>Flimsy Coat</td><td class="wg-note">15 Flimsy Leather · 1 Thread</td></tr>
+                <tr><td>Flimsy Striders</td><td class="wg-note">12 Flimsy Leather · 1 Thread</td></tr>
+                <tr><td>Flimsy Boots</td><td class="wg-note">10 Flimsy Leather · 1 Thread</td></tr>
+              </tbody>
+            </table>
+            <div class="wg-tip">Thread is crafted at the Tailoring Station (6 Cotton each) — it sits right next to Leatherworking.</div>
+            <div class="wg-h" style="margin-top:16px">Levels 5–15 · Soft Leather</div>
+            <table class="wg-table">
+              <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+              <tbody>
+                <tr><td>Soft Leather</td><td class="wg-note">2 Rodent Pelts · 1 Soft Hide</td></tr>
+                <tr><td>Soft Coat</td><td class="wg-note">15 Soft Leather · 2 Thread</td></tr>
+                <tr><td>Soft Boots</td><td class="wg-note">10 Soft Leather · 1 Thread</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="wg-col">
+            <div class="wg-h">Levels 15–31 · Bone Dust</div>
+            <p class="wg-p">Bone Dust is the bottleneck. From level 15, hoard every Bone. Farming skeletons above the <strong>West Tunnel entrance</strong> is efficient.</p>
+            <ul class="wg-ul">
+              <li><strong>Option A:</strong> Grind Fragile Leather to 20, then Delicate Leather to 30.</li>
+              <li><strong>Option B:</strong> Grind Bone Dust until it stops giving XP (~level 31–35). Slower upfront but saves effort later.</li>
+            </ul>
+            <div class="wg-tip">Option B is recommended — one material, and you can farm Lumins at the same time.</div>
+            <div class="wg-h" style="margin-top:16px">Levels 35–45 · Graceful Leather</div>
+            <table class="wg-table">
+              <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+              <tbody>
+                <tr><td>Graceful Leather</td><td class="wg-note">2 Medium Hide · 1 Bone Dust</td></tr>
+                <tr><td>Graceful Coat</td><td class="wg-note">15 Graceful Leather · 3 Heavy Leather Cord</td></tr>
+                <tr><td>Graceful Striders</td><td class="wg-note">12 Graceful Leather · 2 Heavy Leather Cord</td></tr>
+                <tr><td>Graceful Boots</td><td class="wg-note">10 Graceful Leather · 1 Light Leather Cord</td></tr>
+              </tbody>
+            </table>
+            <a class="wg-atlas-link" href="https://heartwoodatlas.com/en/home/crafting/leatherworking" target="_blank">
+              Heartwood Atlas — Leatherworking ↗
+            </a>
+          </div>
+        </div>
+      </details>
+
+      <!-- Blacksmithing -->
+      <details class="wg">
+        <summary>
+          <div class="wg-icon">⚒️</div>
+          <div class="wg-text">
+            <div class="wg-label">Skilling</div>
+            <div class="wg-name">Blacksmithing General Guide</div>
+          </div>
+          <span class="wg-author">By Ninia</span>
+          <span class="wg-chev">▾</span>
+        </summary>
+        <div class="wg-body">
+          <div class="wg-col">
+            <div class="wg-h">Levelling Path</div>
+            <table class="wg-table">
+              <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Tin Bar / Tin Sword</td><td class="wg-lvl">5</td><td></td></tr>
+                <tr><td>Copper Bar / Copper Sword</td><td class="wg-lvl">10</td><td></td></tr>
+                <tr><td>Iron Bar / Iron Polearm</td><td class="wg-lvl">15</td><td></td></tr>
+                <tr><td>Steel Bar</td><td class="wg-lvl">20</td><td class="wg-note">Hoard until polearms</td></tr>
+                <tr><td>Steel Polearm</td><td class="wg-lvl">25</td><td></td></tr>
+                <tr><td>Tungsten Bar</td><td class="wg-lvl">30</td><td class="wg-note">Hoard until polearms</td></tr>
+                <tr><td>Tungsten Polearm</td><td class="wg-lvl">35</td><td></td></tr>
+                <tr><td>Platinum Bar</td><td class="wg-lvl">40</td><td class="wg-note">Hoard until polearms</td></tr>
+                <tr><td>Platinum Polearm</td><td class="wg-lvl">45</td><td></td></tr>
+                <tr><td>Platinum Bar / Polearm</td><td class="wg-lvl">50</td><td></td></tr>
+                <tr><td>Platinum Polearm</td><td class="wg-lvl">55–56</td><td></td></tr>
+                <tr><td><span class="wg-badge-hc">HC</span> Stonescale Brutalizer · Barbed Chakram · Hardened Scale Shield</td><td class="wg-lvl">61</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="wg-col">
+            <div class="wg-h">Tips</div>
+            <div class="wg-tip">Hoard all bars rather than selling — you'll need them to craft the polearms at the next tier.</div>
+            <a class="wg-atlas-link" href="https://heartwoodatlas.com/en/home/crafting/blacksmithing" target="_blank">
+              Heartwood Atlas — Blacksmithing ↗
+            </a>
+          </div>
+        </div>
+      </details>
+
+    </div><!-- /written-grid -->
+
+  </div><!-- /content -->
+
+</div><!-- /main -->
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-ratio">
+      <iframe id="modalFrame" src="" allowfullscreen allow="autoplay"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeFilter = 'All';
+
+function openModal(id) {
+  document.getElementById('modalFrame').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modalFrame').src = '';
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function setFilter(btn) {
+  // sync both sidebar and toolbar buttons
+  document.querySelectorAll('.filter-pill, .sb-link[data-f]').forEach(b => b.classList.remove('active'));
+  const f = btn.dataset.f;
+  document.querySelectorAll(`[data-f="${f}"]`).forEach(b => b.classList.add('active'));
+  activeFilter = f;
+  filterRows();
+}
+
+function filterRows() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const rows = document.querySelectorAll('.guide-row');
+  let visible = 0;
+  rows.forEach(r => {
+    const catOk = activeFilter === 'All' || r.dataset.cat === activeFilter;
+    const titleOk = !q || r.dataset.title.includes(q);
+    const show = catOk && titleOk;
+    r.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+  document.getElementById('visCount').textContent = visible + ' guide' + (visible !== 1 ? 's' : '');
+}
+</script>
+
+</body>
+</html>
