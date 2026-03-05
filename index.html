@@ -1,434 +1,1236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Midnight Rain</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Josefin+Sans:wght@100;300&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Heartwood Guides — Community Crafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --ink:   #060a10;
-  --steel: #2a3f5c;
-  --mist:  #4a6880;
-  --rain:  #7aa8c8;
-  --glow:  #a8d4f0;
-}
+  :root {
+    --bg:       #0d110e;
+    --bg2:      #121a14;
+    --bg3:      #192016;
+    --surface:  #1e2a1c;
+    --surface2: #243022;
+    --border:   #2e4028;
+    --gold:     #c9a84c;
+    --gold2:    #e8c96a;
+    --green:    #4a8c5c;
+    --green2:   #5fad74;
+    --text:     #d4cfc8;
+    --text2:    #8a9080;
+    --white:    #f0ede6;
+    --red:      #c45a3a;
+  }
 
-html, body { width:100%; height:100%; background:var(--ink); overflow:hidden; font-family:'Josefin Sans',sans-serif; cursor:none; }
+  html { scroll-behavior: smooth; }
 
-#sky { position:fixed; inset:0; background:linear-gradient(175deg,#040810 0%,#081422 40%,#0d1e35 70%,#0a1828 100%); transition:background 2.5s ease; }
-#flash { position:fixed; inset:0; background:#c8e8ff; opacity:0; pointer-events:none; z-index:5; mix-blend-mode:screen; transition:opacity 0.05s; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-.cloud-layer { position:fixed; width:200%; height:60%; top:-10%; left:-50%; pointer-events:none; z-index:3; animation:cloudDrift 28s ease-in-out infinite alternate; }
-.cloud-layer svg { width:100%; height:100%; }
+  /* ── TOP NAV ── */
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 28px;
+    height: 58px;
+    background: rgba(13,17,14,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topnav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .04em;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .topnav-logo span { color: var(--white); }
+  .topnav-sep { flex: 1; }
+  .topnav-links { display: flex; gap: 8px; }
+  .topnav-links a {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: .8rem; font-weight: 500;
+    color: var(--text2);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all .18s;
+  }
+  .topnav-links a:hover { color: var(--white); border-color: var(--border); background: var(--surface); }
+  .topnav-links a.discord { color: #7289da; border-color: rgba(114,137,218,.3); }
+  .topnav-links a.discord:hover { background: rgba(114,137,218,.1); }
 
-#rain-canvas { position:fixed; inset:0; z-index:10; pointer-events:none; }
-.fog { position:fixed; width:200%; height:300px; pointer-events:none; z-index:8; opacity:0.4; }
-.fog-bottom { bottom:-80px; left:-50%; background:radial-gradient(ellipse at center, rgba(26,42,64,0.8) 0%, transparent 70%); animation:driftFog 18s ease-in-out infinite alternate; }
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 72px 40px 64px;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,140,92,.18) 0%, transparent 70%),
+                linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='1' cy='1' r='1' fill='%234a8c5c' fill-opacity='.08'/%3E%3C/svg%3E") repeat;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.3);
+    font-size: .72rem; font-weight: 600;
+    color: var(--gold);
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold2); }
+  .hero p {
+    font-size: 1.05rem; color: var(--text2); max-width: 560px; margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: .88rem; font-weight: 600;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all .18s;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--green2); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,.4);
+  }
+  .btn-outline:hover { background: rgba(201,168,76,.08); transform: translateY(-1px); }
 
-/* ── UI ── */
-#ui { position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; }
+  /* ── FEATURED ── */
+  .featured-wrap {
+    padding: 48px 40px 0;
+    max-width: 1200px; margin: 0 auto; width: 100%;
+  }
+  .section-label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .featured-card {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .featured-thumb {
+    position: relative; overflow: hidden;
+    aspect-ratio: 16/9;
+  }
+  .featured-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .4s;
+  }
+  .featured-card:hover .featured-thumb img { transform: scale(1.04); }
+  .featured-play {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.3);
+  }
+  .play-btn {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(201,168,76,.9);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, background .2s;
+  }
+  .featured-card:hover .play-btn { transform: scale(1.1); background: var(--gold2); }
+  .play-btn svg { width: 22px; height: 22px; fill: #0d110e; margin-left: 3px; }
+  .featured-body {
+    padding: 36px 32px;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px;
+  }
+  .featured-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    background: rgba(201,168,76,.15); border: 1px solid rgba(201,168,76,.25);
+    font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--gold); width: fit-content;
+  }
+  .featured-body h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem; font-weight: 600;
+    color: var(--white); line-height: 1.3;
+  }
+  .featured-body p { font-size: .9rem; color: var(--text2); line-height: 1.65; }
+  .featured-meta {
+    font-size: .78rem; color: var(--text2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .featured-meta strong { color: var(--gold); }
 
-.title-block { text-align:center; margin-bottom:38px; animation:fadeUp 2s ease forwards; opacity:0; }
-.eyebrow { font-weight:100; font-size:10px; letter-spacing:0.5em; color:var(--mist); text-transform:uppercase; margin-bottom:12px; }
-h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(46px,7vw,84px); color:var(--glow); letter-spacing:0.04em; line-height:1; text-shadow:0 0 60px rgba(168,212,240,0.2); }
-.subtitle { font-size:11px; font-weight:100; letter-spacing:0.35em; color:var(--mist); margin-top:10px; opacity:0.7; }
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 1200px; margin: 0 auto; width: 100%;
+    padding: 48px 40px 80px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 40px;
+  }
 
-#play-btn { width:76px; height:76px; border-radius:50%; border:1px solid rgba(122,168,200,0.35); background:rgba(10,20,40,0.6); backdrop-filter:blur(8px); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.4s ease; animation:fadeUp 2s 0.3s ease forwards; opacity:0; position:relative; }
-#play-btn::before { content:''; position:absolute; inset:-8px; border-radius:50%; border:1px solid rgba(122,168,200,0.12); transition:all 0.4s ease; }
-#play-btn:hover { border-color:rgba(168,212,240,0.7); background:rgba(122,168,200,0.1); box-shadow:0 0 30px rgba(122,168,200,0.15); transform:scale(1.05); }
-#play-btn:hover::before { inset:-14px; opacity:0.5; }
+  /* ── SIDEBAR ── */
+  .sidebar { flex-shrink: 0; }
+  .sidebar-section { margin-bottom: 28px; }
+  .sidebar-heading {
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text2); margin-bottom: 8px; padding-left: 10px;
+  }
+  .sidebar-nav { list-style: none; }
+  .sidebar-nav li a {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 10px; border-radius: 7px;
+    font-size: .86rem; font-weight: 500;
+    color: var(--text2); text-decoration: none;
+    transition: all .15s;
+    border: 1px solid transparent;
+  }
+  .sidebar-nav li a:hover,
+  .sidebar-nav li a.active {
+    color: var(--white); background: var(--surface2); border-color: var(--border);
+  }
+  .sidebar-nav li a.active { color: var(--gold); }
+  .sidebar-nav li a .nav-icon { font-size: .95rem; width: 18px; text-align: center; }
+  .sidebar-links { display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-links a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: .84rem; font-weight: 500;
+    text-decoration: none; color: var(--text2);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: all .15s;
+  }
+  .sidebar-links a:hover { color: var(--white); border-color: var(--green); }
+  .sidebar-links a.discord-link { color: #7289da; }
+  .sidebar-links a.discord-link:hover { border-color: #7289da; background: rgba(114,137,218,.08); }
+  .discord-cta {
+    margin-top: 4px;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(114,137,218,.25);
+    background: rgba(114,137,218,.06);
+    text-align: center;
+  }
+  .discord-cta p { font-size: .78rem; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+  .discord-cta a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    background: #5865f2;
+    color: #fff; text-decoration: none;
+    font-size: .8rem; font-weight: 600;
+    transition: background .15s;
+  }
+  .discord-cta a:hover { background: #4752c4; }
 
-.controls { margin-top:38px; display:flex; flex-direction:column; align-items:center; gap:20px; animation:fadeUp 2s 0.5s ease forwards; opacity:0; }
-.section-label { font-size:9px; letter-spacing:0.45em; color:var(--mist); text-transform:uppercase; }
+  /* ── CONTENT AREA ── */
+  .content { min-width: 0; }
 
-/* Rain type buttons */
-.rain-types { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:480px; }
-.rain-type-btn {
-  font-family:'Josefin Sans',sans-serif; font-weight:100; font-size:10px;
-  letter-spacing:0.26em; text-transform:uppercase; color:var(--mist);
-  background:transparent; border:1px solid rgba(74,104,128,0.28); border-radius:2px;
-  padding:9px 16px; cursor:pointer; transition:all 0.3s ease; white-space:nowrap;
-}
-.rain-type-btn:hover { color:var(--rain); border-color:rgba(122,168,200,0.5); }
-.rain-type-btn.active { color:var(--glow); border-color:rgba(168,212,240,0.65); background:rgba(122,168,200,0.09); box-shadow:0 0 16px rgba(122,168,200,0.08); }
+  /* ── FILTERS ── */
+  .filters {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 28px;
+  }
+  .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .filter-tab {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: .8rem; font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    transition: all .15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-tab:hover { color: var(--white); border-color: var(--green); }
+  .filter-tab.active {
+    background: var(--green); border-color: var(--green);
+    color: #fff;
+  }
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; opacity: .4; pointer-events: none;
+  }
+  .search-input {
+    padding: 6px 12px 6px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--white);
+    font-size: .82rem;
+    font-family: 'Inter', sans-serif;
+    width: 200px;
+    transition: border-color .15s;
+  }
+  .search-input:focus { outline: none; border-color: var(--green); }
+  .search-input::placeholder { color: var(--text2); }
 
-/* Divider */
-.divider { width:220px; height:1px; background:linear-gradient(90deg,transparent,rgba(74,104,128,0.22),transparent); }
+  /* ── VIDEO GRID ── */
+  .section-header {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px;
+  }
+  .section-header h3 {
+    font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--white);
+  }
+  .count-badge {
+    padding: 2px 8px; border-radius: 99px;
+    font-size: .72rem; font-weight: 600;
+    background: var(--surface2); color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .video-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;
+    margin-bottom: 48px;
+  }
+  .video-card {
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: border-color .2s, transform .2s;
+  }
+  .video-card:hover { border-color: var(--green); transform: translateY(-3px); }
+  .video-thumb {
+    position: relative; aspect-ratio: 16/9; overflow: hidden;
+    background: var(--bg3);
+  }
+  .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .video-thumb-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.25);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .2s;
+  }
+  .video-card:hover .video-thumb-overlay { opacity: 1; }
+  .mini-play {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(201,168,76,.9);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mini-play svg { width: 16px; height: 16px; fill: #0d110e; margin-left: 2px; }
+  .video-num {
+    position: absolute; top: 8px; left: 8px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(13,17,14,.75); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,.1);
+    font-size: .68rem; font-weight: 700;
+    color: var(--text2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-cat-badge {
+    position: absolute; top: 8px; right: 8px;
+    padding: 2px 8px; border-radius: 99px;
+    font-size: .65rem; font-weight: 700; letter-spacing: .04em;
+    backdrop-filter: blur(6px);
+  }
+  .cat-combat   { background: rgba(196,90,58,.75); color: #ffd0c0; }
+  .cat-money    { background: rgba(201,168,76,.75); color: #0d110e; }
+  .cat-skilling { background: rgba(74,140,92,.75);  color: #d0ffd8; }
+  .cat-guide    { background: rgba(80,100,160,.75); color: #d0d8ff; }
+  .video-info { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .video-info h4 {
+    font-size: .88rem; font-weight: 600; color: var(--white);
+    line-height: 1.35;
+  }
+  .video-info p { font-size: .78rem; color: var(--text2); line-height: 1.5; flex: 1; }
+  .video-date { font-size: .72rem; color: var(--text2); }
+  .video-watch {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .75rem; font-weight: 600; color: var(--green2);
+    margin-top: 4px;
+  }
+  .video-watch svg { width: 11px; height: 11px; }
 
-/* Thunder toggle */
-.thunder-row { display:flex; align-items:center; gap:20px; }
-#thunder-toggle {
-  font-family:'Josefin Sans',sans-serif; font-weight:100; font-size:10px;
-  letter-spacing:0.26em; text-transform:uppercase; color:rgba(74,104,128,0.55);
-  background:transparent; border:1px solid rgba(74,104,128,0.2); border-radius:2px;
-  padding:9px 20px; cursor:pointer; transition:all 0.35s ease; white-space:nowrap;
-}
-#thunder-toggle:hover { color:var(--rain); border-color:rgba(122,168,200,0.45); }
-#thunder-toggle.on { color:#ddeeff; border-color:rgba(200,230,255,0.55); background:rgba(180,220,255,0.07); box-shadow:0 0 18px rgba(180,220,255,0.1); }
+  /* ── WRITTEN GUIDES ── */
+  .written-guides { display: flex; flex-direction: column; gap: 14px; }
+  .guide-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .guide-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background .15s;
+    user-select: none;
+  }
+  .guide-header:hover { background: var(--surface2); }
+  .guide-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .guide-meta { flex: 1; }
+  .guide-meta h4 { font-size: .92rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  .guide-meta-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .75rem; color: var(--text2);
+  }
+  .guide-cat-tag {
+    padding: 1px 7px; border-radius: 99px;
+    font-size: .68rem; font-weight: 600;
+    background: rgba(74,140,92,.15); color: var(--green2);
+    border: 1px solid rgba(74,140,92,.2);
+  }
+  .guide-arrow {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, border-color .15s;
+    flex-shrink: 0;
+  }
+  .guide-arrow svg { width: 13px; height: 13px; stroke: var(--text2); }
+  .guide-card:hover .guide-arrow { background: var(--green); border-color: var(--green); }
+  .guide-card:hover .guide-arrow svg { stroke: #fff; }
 
-/* Volume sliders */
-.slider-row { display:flex; align-items:center; gap:14px; }
-.slider-label { font-size:9px; letter-spacing:0.38em; color:var(--mist); text-transform:uppercase; width:72px; text-align:right; }
-input[type=range] { -webkit-appearance:none; appearance:none; width:120px; height:1px; background:var(--steel); outline:none; cursor:pointer; transition:background 0.3s; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:10px; height:10px; border-radius:50%; background:var(--rain); box-shadow:0 0 8px rgba(122,168,200,0.5); transition:all 0.2s; }
-input[type=range]:hover { background:var(--mist); }
-input[type=range]:hover::-webkit-slider-thumb { background:var(--glow); transform:scale(1.3); }
-#thunder-vol-row { opacity:0.3; pointer-events:none; transition:opacity 0.4s; }
-#thunder-vol-row.active { opacity:1; pointer-events:auto; }
+  /* ── GUIDE MODAL ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%; max-width: 680px;
+    max-height: 85vh;
+    display: flex; flex-direction: column;
+    transform: translateY(24px) scale(.97);
+    transition: transform .28s cubic-bezier(.22,.68,0,1.2);
+    overflow: hidden;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+  .modal-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .modal-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .modal-title { flex: 1; }
+  .modal-title h3 {
+    font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--white);
+    margin-bottom: 2px;
+  }
+  .modal-title .modal-by { font-size: .78rem; color: var(--text2); }
+  .modal-title .modal-by span { color: var(--gold); }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background .15s;
+  }
+  .modal-close:hover { background: rgba(196,90,58,.3); border-color: var(--red); }
+  .modal-close svg { width: 14px; height: 14px; stroke: var(--text2); }
+  .modal-body {
+    overflow-y: auto; padding: 24px;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .modal-body::-webkit-scrollbar { width: 5px; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-#status { position:fixed; bottom:32px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:0.45em; color:rgba(74,104,128,0.5); text-transform:uppercase; animation:pulse 4s ease-in-out infinite; white-space:nowrap; }
+  /* ── VIDEO MODAL ── */
+  .video-modal-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .video-modal-backdrop.open { opacity: 1; pointer-events: all; }
+  .video-modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%; max-width: 860px;
+    transform: translateY(28px) scale(.97);
+    transition: transform .28s cubic-bezier(.22,.68,0,1.2);
+    overflow: hidden;
+  }
+  .video-modal-backdrop.open .video-modal { transform: translateY(0) scale(1); }
+  .video-modal-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .video-modal-header .vm-cat {
+    padding: 3px 10px; border-radius: 99px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  }
+  .video-modal-title {
+    flex: 1; font-size: .92rem; font-weight: 600; color: var(--white);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .video-modal-meta { font-size: .75rem; color: var(--text2); white-space: nowrap; }
+  .video-modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background .15s;
+  }
+  .video-modal-close:hover { background: rgba(196,90,58,.3); border-color: var(--red); }
+  .video-modal-close svg { width: 14px; height: 14px; stroke: var(--text2); }
+  .video-embed {
+    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+    background: #000;
+  }
+  .video-embed iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    border: none;
+  }
+  .video-modal-footer {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .video-modal-desc { font-size: .82rem; color: var(--text2); line-height: 1.5; }
+  .yt-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: .78rem; font-weight: 500; color: var(--text2);
+    text-decoration: none; white-space: nowrap;
+    transition: all .15s;
+  }
+  .yt-link:hover { border-color: #ff4444; color: #ff6666; }
 
-#cursor { position:fixed; width:6px; height:6px; border-radius:50%; background:rgba(168,212,240,0.6); pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width 0.2s,height 0.2s; mix-blend-mode:screen; }
-#cursor.big { width:30px; height:30px; background:rgba(168,212,240,0.08); border:1px solid rgba(168,212,240,0.35); }
+  /* tables */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .82rem; }
+  th {
+    text-align: left; padding: 7px 12px;
+    background: var(--bg3); color: var(--gold);
+    font-weight: 600; font-size: .75rem; letter-spacing: .04em;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 7px 12px; border-bottom: 1px solid rgba(46,64,40,.5);
+    color: var(--text); vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(0,0,0,.12); }
 
-@keyframes fadeUp    { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-@keyframes pulse     { 0%,100%{opacity:0.4} 50%{opacity:0.85} }
-@keyframes driftFog  { from{transform:translateX(0)} to{transform:translateX(8%)} }
-@keyframes cloudDrift{ from{transform:translateX(0)} to{transform:translateX(4%)} }
+  /* prose in guide */
+  .modal-body p { font-size: .85rem; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
+  .modal-body strong { color: var(--white); font-weight: 600; }
+  .modal-body ul { padding-left: 18px; margin: 8px 0 12px; }
+  .modal-body ul li { font-size: .85rem; color: var(--text2); line-height: 1.65; margin-bottom: 4px; }
+  .modal-body h5 {
+    font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--green2); margin: 16px 0 6px;
+  }
+  .guide-tip {
+    margin-top: 12px; padding: 10px 14px;
+    border-radius: 7px;
+    border-left: 3px solid var(--gold);
+    background: rgba(201,168,76,.07);
+    font-size: .82rem; color: var(--text); line-height: 1.6;
+  }
+  .atlas-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px;
+    padding: 6px 14px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    font-size: .8rem; font-weight: 500;
+    color: var(--gold);
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .atlas-link:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    font-size: .78rem; color: var(--text2);
+  }
+  footer a { color: var(--text2); text-decoration: none; }
+  footer a:hover { color: var(--white); }
+  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: .9rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .featured-card { grid-template-columns: 1fr; }
+    .featured-body { padding: 24px; }
+    .main { grid-template-columns: 1fr; gap: 28px; }
+    .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .discord-cta { grid-column: span 2; }
+    .featured-wrap, .main { padding-left: 20px; padding-right: 20px; }
+    .hero { padding: 48px 20px 40px; }
+  }
+  @media (max-width: 600px) {
+    .sidebar { grid-template-columns: 1fr; }
+    .discord-cta { grid-column: span 1; }
+    .topnav-links a span { display: none; }
+    .video-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 440px) {
+    .video-grid { grid-template-columns: 1fr; }
+  }
+
+  /* hidden */
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div id="sky"></div>
-<div id="flash"></div>
-
-<div class="cloud-layer">
-  <svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <filter id="b1"><feGaussianBlur stdDeviation="18"/></filter>
-      <filter id="b2"><feGaussianBlur stdDeviation="28"/></filter>
-      <filter id="b3"><feGaussianBlur stdDeviation="10"/></filter>
-    </defs>
-    <ellipse cx="200"  cy="120" rx="280" ry="110" fill="#0f1e32" filter="url(#b2)" opacity="0.95"/>
-    <ellipse cx="700"  cy="80"  rx="340" ry="130" fill="#0d1c30" filter="url(#b2)" opacity="0.95"/>
-    <ellipse cx="1100" cy="140" rx="220" ry="100" fill="#0f1e32" filter="url(#b2)" opacity="0.9"/>
-    <ellipse cx="400"  cy="160" rx="200" ry="80"  fill="#111e2e" filter="url(#b1)" opacity="0.9"/>
-    <ellipse cx="900"  cy="100" rx="260" ry="95"  fill="#10213a" filter="url(#b1)" opacity="0.85"/>
-    <ellipse cx="150"  cy="200" rx="160" ry="55"  fill="#141f30" filter="url(#b3)" opacity="0.7"/>
-    <ellipse cx="600"  cy="230" rx="300" ry="60"  fill="#131f31" filter="url(#b3)" opacity="0.65"/>
-    <ellipse cx="1050" cy="195" rx="180" ry="58"  fill="#141f30" filter="url(#b3)" opacity="0.7"/>
-  </svg>
-</div>
-
-<canvas id="rain-canvas"></canvas>
-<div class="fog fog-bottom"></div>
-
-<div id="ui">
-  <div class="title-block">
-    <p class="eyebrow">Ambient Soundscape</p>
-    <h1>Midnight Rain</h1>
-    <p class="subtitle" id="mode-subtitle">select a rain type below</p>
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="#" class="topnav-logo">Heart<span>wood</span></a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-links">
+    <a href="https://discord.gg/cRA8Xm2zD2" target="_blank" class="discord">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4A17.5 17.5 0 0 0 15.8 2.6a.1.1 0 0 0-.1 0c-.2.4-.4.8-.6 1.2a16.2 16.2 0 0 0-6.2 0A13 13 0 0 0 8.4 2.6a.1.1 0 0 0-.1 0A17.4 17.4 0 0 0 3.7 4 17.9 17.9 0 0 0 1 18.4 17.6 17.6 0 0 0 6.4 21a.1.1 0 0 0 .1 0c.4-.6.8-1.2 1.1-1.9a.1.1 0 0 0-.1-.1 11.6 11.6 0 0 1-1.6-.8.1.1 0 0 1 0-.1l.3-.3a.1.1 0 0 1 .1 0 12.6 12.6 0 0 0 10.6 0 .1.1 0 0 1 .1 0l.3.3a.1.1 0 0 1 0 .1 11 11 0 0 1-1.7.8.1.1 0 0 0 0 .1c.4.7.7 1.3 1.1 1.9a.1.1 0 0 0 .1 0 17.5 17.5 0 0 0 5.4-2.6A17.9 17.9 0 0 0 23 4zM8.5 15.6c-1.3 0-2.4-1.2-2.4-2.8 0-1.5 1-2.7 2.4-2.7 1.3 0 2.4 1.2 2.3 2.7 0 1.6-1 2.8-2.3 2.8zm7 0c-1.3 0-2.4-1.2-2.4-2.8 0-1.5 1-2.7 2.4-2.7 1.3 0 2.4 1.2 2.3 2.7 0 1.6-1 2.8-2.3 2.8z"/></svg>
+      <span>Discord</span>
+    </a>
+    <a href="https://heartwoodonline.com" target="_blank">
+      🌿 <span>Play</span>
+    </a>
+    <a href="https://heartwoodatlas.com" target="_blank">
+      🗺️ <span>Atlas</span>
+    </a>
   </div>
+</nav>
 
-  <button id="play-btn" aria-label="Play / Pause">
-    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#a8d4f0" stroke="none"/></svg>
-  </button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">⚔️ Community Crafted</div>
+  <h1>Master <em>Heartwood</em><br>from Level One</h1>
+  <p>Community-crafted guides covering combat, skilling, money-making and more. Everything you need to thrive in Heartwood Online.</p>
+  <div class="hero-btns">
+    <a href="#guides" class="btn btn-primary">📜 Browse Guides</a>
+    <a href="https://heartwoodonline.com" target="_blank" class="btn btn-outline">🌿 Play the Game</a>
+  </div>
+</section>
 
-  <div class="controls">
-    <p class="section-label">Rain Type</p>
-    <div class="rain-types">
-      <button class="rain-type-btn active" data-type="drizzle">Drizzle</button>
-      <button class="rain-type-btn" data-type="steady">Steady Rain</button>
-      <button class="rain-type-btn" data-type="shower">Rain Shower</button>
-      <button class="rain-type-btn" data-type="downpour">Downpour</button>
+<!-- FEATURED -->
+<div class="featured-wrap">
+  <div class="section-label">★ Featured Guide</div>
+  <div class="featured-card">
+    <div class="featured-thumb" onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" style="cursor:pointer">
+      <img src="https://img.youtube.com/vi/cDULmT1YcDM/maxresdefault.jpg" alt="Ultimate Combat Guide" />
+      <div class="featured-play">
+        <div class="play-btn">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
     </div>
-
-    <div class="slider-row">
-      <span class="slider-label">Rain Vol</span>
-      <input type="range" id="rain-vol" min="0" max="100" value="70">
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="thunder-row">
-      <p class="section-label">Thunder</p>
-      <button id="thunder-toggle">Off</button>
-    </div>
-
-    <div class="slider-row" id="thunder-vol-row">
-      <span class="slider-label">Thunder Vol</span>
-      <input type="range" id="thunder-vol" min="0" max="100" value="55">
+    <div class="featured-body">
+      <div class="featured-tag">⚔️ Combat</div>
+      <h2>Ultimate Heartwood Online Combat Guide</h2>
+      <p>Level 1–50 walkthrough — what to kill and where to go. The definitive combat resource by community member Jord.</p>
+      <div class="featured-meta">By <strong>Jord</strong> &nbsp;·&nbsp; Mar 3, 2026</div>
+      <button onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" class="btn btn-primary" style="width:fit-content;margin-top:8px;border:none;cursor:pointer">
+        ▶ Watch Now
+      </button>
     </div>
   </div>
 </div>
 
-<p id="status">Click play to begin</p>
-<div id="cursor"></div>
+<!-- MAIN -->
+<div class="main" id="guides">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Browse</div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active" data-filter="all"><span class="nav-icon">📜</span> All Guides</a></li>
+        <li><a href="#" data-filter="combat"><span class="nav-icon">⚔️</span> Combat</a></li>
+        <li><a href="#" data-filter="money"><span class="nav-icon">💰</span> Money Makers</a></li>
+        <li><a href="#" data-filter="skilling"><span class="nav-icon">🪵</span> Skilling</a></li>
+        <li><a href="#" data-filter="guide"><span class="nav-icon">🗺️</span> Guides</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Links</div>
+      <div class="sidebar-links">
+        <a href="https://discord.gg/cRA8Xm2zD2" target="_blank" class="discord-link">💬 Discord</a>
+        <a href="https://heartwoodonline.com" target="_blank">🌿 Play the Game</a>
+        <a href="https://heartwoodatlas.com" target="_blank">🗺️ Heartwood Atlas</a>
+      </div>
+    </div>
+
+    <div class="discord-cta">
+      <p>More tips & live help in our community.</p>
+      <a href="https://discord.gg/cRA8Xm2zD2" target="_blank">Join Discord ↗</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="combat">Combat</button>
+        <button class="filter-tab" data-filter="money">Money</button>
+        <button class="filter-tab" data-filter="skilling">Skilling</button>
+        <button class="filter-tab" data-filter="guide">Guides</button>
+      </div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="search-input" type="text" id="searchInput" placeholder="Search guides…" />
+      </div>
+    </div>
+
+    <!-- VIDEO GUIDES -->
+    <div class="section-header">
+      <h3>Video Guides</h3>
+      <span class="count-badge" id="videoCount">12</span>
+    </div>
+    <div class="video-grid" id="videoGrid">
+
+      <div class="video-card" onclick="openVideo('j5ft6unpKP8','How To Change Server','guide','New player? Don\'t know how to change server? Try this!','Mar 4, 2026')" data-cat="guide" data-title="How To Change Server">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/j5ft6unpKP8/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">01</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>How To Change Server</h4>
+          <p>New player? Don't know how to change server? Try this!</p>
+          <span class="video-date">Mar 4, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('FAID9PP19Q4','How To Find Fishing Hotspots','guide','Let Guenne Divillizen show you how to find fishing hotspots.','Mar 4, 2026')" data-cat="guide" data-title="How To Find Fishing Hotspots">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/FAID9PP19Q4/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">02</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>How To Find Fishing Hotspots</h4>
+          <p>Let Guenne Divillizen show you how to find fishing hotspots.</p>
+          <span class="video-date">Mar 4, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('OS_wzAeHaX0','How To Prepare for Shadowfang','guide','Want some tips on how to prepare for Shadowfang?','Mar 4, 2026')" data-cat="guide" data-title="How To Prepare for Shadowfang">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/OS_wzAeHaX0/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">03</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>How To Prepare for Shadowfang</h4>
+          <p>Want some tips on how to prepare for Shadowfang?</p>
+          <span class="video-date">Mar 4, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" data-cat="combat" data-title="Ultimate Heartwood Online Combat Guide">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/cDULmT1YcDM/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">04</div>
+          <div class="video-cat-badge cat-combat">Combat</div>
+        </div>
+        <div class="video-info">
+          <h4>Ultimate Heartwood Online Combat Guide</h4>
+          <p>Level 1–50 walkthrough — what to kill and where to go. By Jord.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('s30La5wFfsY','How Much Can You Make Killing Silkworms?','money','Testing silkworm profits — is it worth your time?','Mar 3, 2026')" data-cat="money" data-title="How Much Can You Make Killing Silkworms">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/s30La5wFfsY/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">05</div>
+          <div class="video-cat-badge cat-money">Money</div>
+        </div>
+        <div class="video-info">
+          <h4>How Much Can You Make Killing Silkworms?</h4>
+          <p>Testing silkworm profits — is it worth your time?</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('06IY-NpMFU4','Killing Yellow Hats for 1 Hour!','money','Full hour of yellow hat grinding — here\'s the final gold count.','Mar 3, 2026')" data-cat="money" data-title="Killing Yellow Hats for 1 Hour">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/06IY-NpMFU4/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">06</div>
+          <div class="video-cat-badge cat-money">Money</div>
+        </div>
+        <div class="video-info">
+          <h4>Killing Yellow Hats for 1 Hour!</h4>
+          <p>Full hour of yellow hat grinding — here's the final gold count.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('uFSELw1lMLM','Where To Chop All Trees in Game','skilling','Every tree location in Heartwood Online — quick visual tour.','Mar 3, 2026')" data-cat="skilling" data-title="Where To Chop All Trees in Game">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/uFSELw1lMLM/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">07</div>
+          <div class="video-cat-badge cat-skilling">Skilling</div>
+        </div>
+        <div class="video-info">
+          <h4>Where To Chop All Trees in Game</h4>
+          <p>Every tree location in Heartwood Online — quick visual tour.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('01Plp1MWj_0','How To Use the Bulk Market!','guide','Beginner-friendly walkthrough of the Bulk Market. By One.','Mar 3, 2026')" data-cat="guide" data-title="How To Use the Bulk Market">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/01Plp1MWj_0/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">08</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>How To Use the Bulk Market!</h4>
+          <p>Beginner-friendly walkthrough of the Bulk Market. By One.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('z5wMUNou_EY','Best Gin Berry Farming Spot','guide','One reveals the top gin berry location in the game.','Mar 3, 2026')" data-cat="guide" data-title="Best Gin Berry Farming Spot">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/z5wMUNou_EY/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">09</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>Best Gin Berry Farming Spot</h4>
+          <p>One reveals the top gin berry location in the game.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('nAaeextA-BI','#1 Turnip Farming Spot','guide','One shows the absolute best place to farm turnips.','Mar 3, 2026')" data-cat="guide" data-title="Number 1 Turnip Farming Spot">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/nAaeextA-BI/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">10</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>#1 Turnip Farming Spot</h4>
+          <p>One shows the absolute best place to farm turnips.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('qkdJ-BixxJE','Best Coal Farming Spot','guide','One shows where to mine coal as efficiently as possible.','Mar 3, 2026')" data-cat="guide" data-title="Best Coal Farming Spot">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/qkdJ-BixxJE/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">11</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>Best Coal Farming Spot</h4>
+          <p>One shows where to mine coal as efficiently as possible.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="openVideo('PKiL_8fjI4s','Best Cotton Farming Spot','guide','One reveals where to farm cotton quickly and efficiently.','Mar 3, 2026')" data-cat="guide" data-title="Best Cotton Farming Spot">
+        <div class="video-thumb">
+          <img src="https://img.youtube.com/vi/PKiL_8fjI4s/hqdefault.jpg" alt="" />
+          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div class="video-num">12</div>
+          <div class="video-cat-badge cat-guide">Guide</div>
+        </div>
+        <div class="video-info">
+          <h4>Best Cotton Farming Spot</h4>
+          <p>One reveals where to farm cotton quickly and efficiently.</p>
+          <span class="video-date">Mar 3, 2026</span>
+          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+        </div>
+      </div>
+
+    </div><!-- /video-grid -->
+
+    <!-- WRITTEN GUIDES -->
+    <div class="section-header">
+      <h3>Written Guides</h3>
+      <span class="count-badge">3</span>
+    </div>
+    <div class="written-guides">
+
+      <!-- CARPENTRY -->
+      <div class="guide-card" onclick="openGuide('carpentry')" style="cursor:pointer">
+        <div class="guide-header">
+          <div class="guide-icon">🪚</div>
+          <div class="guide-meta">
+            <h4>Carpentry General Guide</h4>
+            <div class="guide-meta-row">
+              <span class="guide-cat-tag">Skilling</span>
+              <span>By Ninia</span>
+            </div>
+          </div>
+          <div class="guide-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEATHERWORKING -->
+      <div class="guide-card" onclick="openGuide('leather')" style="cursor:pointer">
+        <div class="guide-header">
+          <div class="guide-icon">🧵</div>
+          <div class="guide-meta">
+            <h4>Leatherworking Guide</h4>
+            <div class="guide-meta-row">
+              <span class="guide-cat-tag">Skilling</span>
+              <span>By Akor</span>
+            </div>
+          </div>
+          <div class="guide-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLACKSMITHING -->
+      <div class="guide-card" onclick="openGuide('blacksmith')" style="cursor:pointer">
+        <div class="guide-header">
+          <div class="guide-icon">⚒️</div>
+          <div class="guide-meta">
+            <h4>Blacksmithing General Guide</h4>
+            <div class="guide-meta-row">
+              <span class="guide-cat-tag">Skilling</span>
+              <span>By Ninia</span>
+            </div>
+          </div>
+          <div class="guide-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /written-guides -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── VIDEO MODAL ── -->
+<div class="video-modal-backdrop" id="videoModalBackdrop" onclick="handleVideoBackdropClick(event)">
+  <div class="video-modal" id="videoModal">
+    <div class="video-modal-header">
+      <div class="vm-cat video-cat-badge" id="vmCat"></div>
+      <div class="video-modal-title" id="vmTitle"></div>
+      <div class="video-modal-meta" id="vmDate"></div>
+      <div class="video-modal-close" onclick="closeVideo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+    </div>
+    <div class="video-embed">
+      <iframe id="videoIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+    <div class="video-modal-footer">
+      <div class="video-modal-desc" id="vmDesc"></div>
+      <a class="yt-link" id="vmYtLink" href="#" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.4 2.8-5.4 2.7z"/></svg>
+        Open on YouTube
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ── GUIDE MODAL ── -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-icon" id="modalIcon"></div>
+      <div class="modal-title">
+        <h3 id="modalTitle"></h3>
+        <div class="modal-by" id="modalBy"></div>
+      </div>
+      <div class="modal-close" onclick="closeGuide()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Heartwood Guides</div>
+  <div>Community crafted · Not affiliated with Heartwood Online</div>
+  <div style="display:flex;gap:16px">
+    <a href="https://discord.gg/cRA8Xm2zD2" target="_blank">Discord</a>
+    <a href="https://heartwoodonline.com" target="_blank">Play</a>
+    <a href="https://heartwoodatlas.com" target="_blank">Atlas</a>
+  </div>
+</footer>
 
 <script>
-/* ═══ CURSOR ═══ */
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
-document.querySelectorAll('button,input').forEach(el => {
-  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-});
+  // ── VIDEO MODAL ──
+  const catLabels = { combat: 'Combat', money: 'Money', skilling: 'Skilling', guide: 'Guide' };
+  const catClasses = { combat: 'cat-combat', money: 'cat-money', skilling: 'cat-skilling', guide: 'cat-guide' };
 
-/* ═══ RAIN CONFIGS ═══ */
-const TYPES = {
-  drizzle:  { label:'Light Drizzle',   subtitle:'light drizzle · looping',   sky:'linear-gradient(175deg,#050a12 0%,#091520 40%,#0e1f32 70%,#0b1926 100%)', vis:{count:0.14,speed:[4,8],   len:[7,14],  alpha:[0.04,0.09],w:[0.3,0.55], angle:0.06}, sfx:{boost:0.7,lp:4000,lpQ:0.4,bp:1200,bpQ:0.3,hp:300,dropRate:0,dropAmp:0} },
-  steady:   { label:'Steady Rain',     subtitle:'steady rain · looping',     sky:'linear-gradient(175deg,#040810 0%,#081422 40%,#0d1e35 70%,#0a1828 100%)', vis:{count:0.38,speed:[10,17], len:[14,25], alpha:[0.06,0.15],w:[0.5,0.9],  angle:0.15}, sfx:{boost:2.2,lp:4200,lpQ:0.8,bp:1300,bpQ:0.4,hp:280,dropRate:30,dropAmp:0.06} },
-  shower:   { label:'Rain Shower',     subtitle:'rain shower · looping',     sky:'linear-gradient(175deg,#030609 0%,#060e1a 40%,#0b182e 70%,#081320 100%)', vis:{count:0.58,speed:[13,22], len:[18,34], alpha:[0.08,0.18],w:[0.55,1.05],angle:0.22}, sfx:{boost:3.2,lp:3600,lpQ:1.0,bp:980, bpQ:0.35,hp:160,dropRate:50,dropAmp:0.09} },
-  downpour: { label:'Heavy Downpour',  subtitle:'heavy downpour · looping',  sky:'linear-gradient(175deg,#020407 0%,#050c16 40%,#091526 70%,#060e1c 100%)', vis:{count:0.95,speed:[20,34], len:[26,52], alpha:[0.10,0.26],w:[0.7,1.5],  angle:0.30}, sfx:{boost:5.5,lp:2600,lpQ:1.3,bp:650, bpQ:0.28,hp:60, dropRate:90,dropAmp:0.15} },
-};
-
-/* ═══ CANVAS ═══ */
-const canvas = document.getElementById('rain-canvas');
-const ctx    = canvas.getContext('2d');
-let drops=[], W, H, currentType='drizzle', rainAlpha=0, targetAlpha=0, lastTime=0;
-
-function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; buildDrops(); }
-function buildDrops() {
-  const v=TYPES[currentType].vis; drops=[];
-  const n=Math.floor(W*v.count);
-  for (let i=0;i<n;i++) drops.push(mkDrop(v,true));
-}
-function mkDrop(v,scatter) {
-  const speed=v.speed[0]+Math.random()*(v.speed[1]-v.speed[0]);
-  const len  =v.len[0]  +Math.random()*(v.len[1]  -v.len[0]);
-  const alpha=v.alpha[0]+Math.random()*(v.alpha[1] -v.alpha[0]);
-  const width=v.w[0]    +Math.random()*(v.w[1]     -v.w[0]);
-  return { x:Math.random()*W, y:scatter?Math.random()*H:-len-Math.random()*40,
-           vx:Math.sin(v.angle)*speed*0.6, vy:Math.cos(v.angle)*speed, len, alpha, width };
-}
-
-function drawRain(ts) {
-  requestAnimationFrame(drawRain);
-  const dt=Math.min((ts-lastTime)/16.67,3); lastTime=ts;
-  rainAlpha+=(targetAlpha-rainAlpha)*0.05;
-  ctx.clearRect(0,0,W,H);
-  if (rainAlpha<0.01) return;
-  const v=TYPES[currentType].vis;
-  ctx.save(); ctx.globalAlpha=rainAlpha;
-  for (let d of drops) {
-    d.x+=d.vx*dt; d.y+=d.vy*dt;
-    if (d.y>H+20||d.x>W+20) { Object.assign(d,mkDrop(v,false)); d.x=Math.random()*W; }
-    const x2=d.x-d.vx/d.vy*d.len, y2=d.y-d.len;
-    const g=ctx.createLinearGradient(x2,y2,d.x,d.y);
-    g.addColorStop(0,'rgba(155,205,235,0)'); g.addColorStop(1,`rgba(155,205,235,${d.alpha})`);
-    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(d.x,d.y);
-    ctx.strokeStyle=g; ctx.lineWidth=d.width; ctx.stroke();
+  function openVideo(id, title, cat, desc, date) {
+    document.getElementById('vmTitle').textContent = title;
+    document.getElementById('vmDate').textContent = date;
+    document.getElementById('vmDesc').textContent = desc;
+    const catEl = document.getElementById('vmCat');
+    catEl.textContent = catLabels[cat] || cat;
+    catEl.className = 'vm-cat video-cat-badge ' + (catClasses[cat] || '');
+    document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    document.getElementById('vmYtLink').href = `https://www.youtube.com/watch?v=${id}`;
+    document.getElementById('videoModalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
-  ctx.restore();
-}
-window.addEventListener('resize',resize); resize(); requestAnimationFrame(drawRain);
 
-/* ═══ AUDIO ═══ */
-let actx, masterGain, thunderGainNode;
-let playing=false, thunderOn=false;
-let rainVol=0.70, thunderVol=0.55;
-let stopRain=null, stopThunder=null;
-
-function buildRainAudio(type) {
-  const s=TYPES[type].sfx;
-  const g=actx.createGain(); g.gain.setValueAtTime(0,actx.currentTime); g.connect(masterGain);
-  let alive=true;
-  const bufLen=actx.sampleRate*8;
-  const buf=actx.createBuffer(2,bufLen,actx.sampleRate);
-  for (let c=0;c<2;c++) {
-    const d=buf.getChannelData(c); let last=0;
-    for (let i=0;i<bufLen;i++) { const w=Math.random()*2-1; last=(last+0.03*w)/1.03; d[i]=last*s.boost; }
+  function closeVideo() {
+    document.getElementById('videoModalBackdrop').classList.remove('open');
+    document.getElementById('videoIframe').src = ''; // stop playback
+    document.body.style.overflow = '';
   }
-  const noise=actx.createBufferSource(); noise.buffer=buf; noise.loop=true;
-  const hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=s.hp;
-  const lp=actx.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=s.lp; lp.Q.value=s.lpQ;
-  const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=s.bp; bp.Q.value=s.bpQ;
-  noise.connect(hp); hp.connect(lp); lp.connect(bp); bp.connect(g);
-  noise.start();
 
-  function dropTick() {
-    if (!alive||s.dropRate===0) return;
-    const t=actx.currentTime;
-    const osc=actx.createOscillator(); const env=actx.createGain();
-    osc.type='sine';
-    osc.frequency.setValueAtTime(s.bp*(0.75+Math.random()*0.7),t);
-    osc.frequency.exponentialRampToValueAtTime(s.bp*0.25,t+0.1);
-    env.gain.setValueAtTime(0,t);
-    env.gain.linearRampToValueAtTime(s.dropAmp*(0.4+Math.random()*0.9),t+0.004);
-    env.gain.exponentialRampToValueAtTime(0.0001,t+0.1+Math.random()*0.12);
-    osc.connect(env); env.connect(g); osc.start(t); osc.stop(t+0.25);
-    setTimeout(dropTick,(1000/s.dropRate)*(0.3+Math.random()*1.5));
+  function handleVideoBackdropClick(e) {
+    if (e.target === document.getElementById('videoModalBackdrop')) closeVideo();
   }
-  dropTick();
-  g.gain.setTargetAtTime(1,actx.currentTime,0.8);
-  return ()=>{ alive=false; g.gain.setTargetAtTime(0,actx.currentTime,0.5); setTimeout(()=>{ try{noise.stop();g.disconnect();}catch(e){} },2000); };
-}
-
-function buildThunderAudio() {
-  const g=actx.createGain(); g.gain.setValueAtTime(0,actx.currentTime); g.connect(actx.destination);
-  thunderGainNode=g;
-  let alive=true;
-
-  function strike() {
-    if (!alive) return;
-    const t=actx.currentTime;
-
-    const intensity = 0.6 + Math.random() * 0.4;
-    const rumbleDur = 4 + Math.random() * 6;
-
-    // ── 1. Initial crack — sharp broadband noise burst ──
-    const crackLen = Math.floor(actx.sampleRate * 0.18);
-    const crackBuf = actx.createBuffer(1, crackLen, actx.sampleRate);
-    const crackData = crackBuf.getChannelData(0);
-    for (let i = 0; i < crackLen; i++) crackData[i] = Math.random() * 2 - 1;
-    const crackSrc = actx.createBufferSource(); crackSrc.buffer = crackBuf;
-    // Shape: instant peak, very fast exponential decay
-    const crackEnv = actx.createGain();
-    crackEnv.gain.setValueAtTime(0, t);
-    crackEnv.gain.linearRampToValueAtTime(intensity * 1.1, t + 0.002);
-    crackEnv.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-    // Bandpass to shape the crack timbre (not too harsh)
-    const crackHp = actx.createBiquadFilter(); crackHp.type = 'highpass'; crackHp.frequency.value = 120;
-    const crackLp = actx.createBiquadFilter(); crackLp.type = 'lowpass';  crackLp.frequency.value = 2200;
-    crackSrc.connect(crackHp); crackHp.connect(crackLp); crackLp.connect(crackEnv); crackEnv.connect(g);
-    crackSrc.start(t); crackSrc.stop(t + 0.2);
-
-    // ── 2. Rolling rumble — brown noise, long tail ──
-    const rumbleLen = Math.floor(actx.sampleRate * (rumbleDur + 1));
-    const rumbleBuf = actx.createBuffer(2, rumbleLen, actx.sampleRate);
-    for (let c = 0; c < 2; c++) {
-      const d = rumbleBuf.getChannelData(c);
-      let last = 0;
-      for (let i = 0; i < rumbleLen; i++) {
-        const w = Math.random() * 2 - 1;
-        last = (last + 0.012 * w) / 1.012;
-        d[i] = last * 18;
-      }
+  const guides = {
+    carpentry: {
+      icon: '🪚',
+      title: 'Carpentry General Guide',
+      by: 'By <span>Ninia</span>',
+      html: `
+        <h5>Levelling Path</h5>
+        <table>
+          <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Oak Boards / Oak Buckler</td><td>5</td><td></td></tr>
+            <tr><td>Pine Boards</td><td>10</td><td>Hoard until bucklers</td></tr>
+            <tr><td>Pine Buckler</td><td>15</td><td></td></tr>
+            <tr><td>Birch Boards</td><td>20</td><td>Hoard until bucklers</td></tr>
+            <tr><td>Birch Buckler</td><td>25</td><td></td></tr>
+            <tr><td>Maple Boards</td><td>30</td><td>Hoard until bucklers</td></tr>
+            <tr><td>Maple Buckler</td><td>35</td><td></td></tr>
+            <tr><td>Mandrove Boards</td><td>40</td><td>Hoard until bucklers</td></tr>
+            <tr><td>Mandrove Buckler</td><td>45</td><td></td></tr>
+            <tr><td>Mandrove Boards / Buckler</td><td>50</td><td></td></tr>
+            <tr><td>Mandrove Buckler</td><td>55–56</td><td></td></tr>
+            <tr><td>HC Sparkling Lasher · Pearl Wand · Shiny Scale Shield</td><td>61</td><td></td></tr>
+          </tbody>
+        </table>
+        <div class="guide-tip">💡 Hoard all boards rather than selling — you'll need them to craft the bucklers at the next tier.</div>
+        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/carpentry" target="_blank">🗺️ Heartwood Atlas — Carpentry ↗</a>
+      `
+    },
+    leather: {
+      icon: '🧵',
+      title: 'Leatherworking Guide',
+      by: 'By <span>Akor</span>',
+      html: `
+        <h5>Getting Started</h5>
+        <p>If you're a fresh Rogue, keep every <strong>Rodent Pelt</strong> and <strong>Soft Hide</strong> you find. At <strong>character level 12</strong> you can begin Leatherworking — craft everything into Flimsy Leather until level 5, then start making armour.</p>
+        <h5>Levels 1–5 · Flimsy Leather</h5>
+        <table>
+          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+          <tbody>
+            <tr><td>Flimsy Leather</td><td>2 Rodent Pelts</td></tr>
+            <tr><td>Flimsy Coat</td><td>15 Flimsy Leather · 1 Thread</td></tr>
+            <tr><td>Flimsy Striders</td><td>12 Flimsy Leather · 1 Thread</td></tr>
+            <tr><td>Flimsy Boots</td><td>10 Flimsy Leather · 1 Thread</td></tr>
+          </tbody>
+        </table>
+        <p>Thread is crafted at the Tailoring Station (6 Cotton each) — it sits right next to Leatherworking.</p>
+        <h5>Levels 5–15 · Plush Leather</h5>
+        <table>
+          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+          <tbody>
+            <tr><td>Plush Leather</td><td>2 Rodent Pelts · 1 Soft Hide</td></tr>
+            <tr><td>Plush Coat</td><td>15 Plush Leather · 2 Thread</td></tr>
+            <tr><td>Plush Boots</td><td>10 Plush Leather · 1 Thread</td></tr>
+          </tbody>
+        </table>
+        <h5>Levels 15–31 · Bone Dust</h5>
+        <p>Bone Dust is the bottleneck. From level 15, hoard every Bone. Farming skeletons above the <strong>West Tunnel entrance</strong> is efficient.</p>
+        <ul>
+          <li><strong>Option A:</strong> Grind Fragile Leather to 20, then Delicate Leather to 30.</li>
+          <li><strong>Option B:</strong> Grind Bone Dust until it stops giving XP (~level 31–35). Slower upfront but saves effort later.</li>
+        </ul>
+        <div class="guide-tip">💡 Option B is recommended — one material, and you can farm Lumins at the same time.</div>
+        <h5>Levels 35–45 · Graceful Leather</h5>
+        <table>
+          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
+          <tbody>
+            <tr><td>Graceful Leather</td><td>2 Medium Hide · 1 Bone Dust</td></tr>
+            <tr><td>Graceful Coat</td><td>15 Graceful Leather · 3 Heavy Leather Cord</td></tr>
+            <tr><td>Graceful Striders</td><td>12 Graceful Leather · 2 Heavy Leather Cord</td></tr>
+            <tr><td>Graceful Boots</td><td>10 Graceful Leather · 1 Light Leather Cord</td></tr>
+          </tbody>
+        </table>
+        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/leatherworking" target="_blank">🗺️ Heartwood Atlas — Leatherworking ↗</a>
+      `
+    },
+    blacksmith: {
+      icon: '⚒️',
+      title: 'Blacksmithing General Guide',
+      by: 'By <span>Ninia</span>',
+      html: `
+        <h5>Levelling Path</h5>
+        <table>
+          <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Tin Bar / Tin Sword</td><td>5</td><td></td></tr>
+            <tr><td>Copper Bar / Copper Sword</td><td>10</td><td></td></tr>
+            <tr><td>Iron Bar / Iron Polearm</td><td>15</td><td></td></tr>
+            <tr><td>Steel Bar</td><td>20</td><td>Hoard until polearms</td></tr>
+            <tr><td>Steel Polearm</td><td>25</td><td></td></tr>
+            <tr><td>Tungsten Bar</td><td>30</td><td>Hoard until polearms</td></tr>
+            <tr><td>Tungsten Polearm</td><td>35</td><td></td></tr>
+            <tr><td>Platinum Bar</td><td>40</td><td>Hoard until polearms</td></tr>
+            <tr><td>Platinum Polearm</td><td>45</td><td></td></tr>
+            <tr><td>Platinum Bar / Polearm</td><td>50</td><td></td></tr>
+            <tr><td>Platinum Polearm</td><td>55–56</td><td></td></tr>
+            <tr><td>HC Stonescale Brutalizer · Barbed Chakram · Hardened Scale Shield</td><td>61</td><td></td></tr>
+          </tbody>
+        </table>
+        <div class="guide-tip">💡 Hoard all bars rather than selling — you'll need them to craft the polearms at the next tier.</div>
+        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/blacksmithing" target="_blank">🗺️ Heartwood Atlas — Blacksmithing ↗</a>
+      `
     }
-    const rumbleSrc = actx.createBufferSource(); rumbleSrc.buffer = rumbleBuf;
-    const rumbleLp  = actx.createBiquadFilter(); rumbleLp.type = 'lowpass'; rumbleLp.frequency.value = 160; rumbleLp.Q.value = 0.6;
-    const rumbleHp  = actx.createBiquadFilter(); rumbleHp.type = 'highpass'; rumbleHp.frequency.value = 25;
-    const rumbleEnv = actx.createGain();
-    // Starts just after crack, swells slightly then long exponential fade
-    rumbleEnv.gain.setValueAtTime(0, t);
-    rumbleEnv.gain.linearRampToValueAtTime(intensity * 0.55, t + 0.12);
-    rumbleEnv.gain.linearRampToValueAtTime(intensity * 0.65, t + 0.5);
-    rumbleEnv.gain.exponentialRampToValueAtTime(intensity * 0.2, t + rumbleDur * 0.4);
-    rumbleEnv.gain.exponentialRampToValueAtTime(0.0001, t + rumbleDur);
-    rumbleSrc.connect(rumbleHp); rumbleHp.connect(rumbleLp); rumbleLp.connect(rumbleEnv); rumbleEnv.connect(g);
-    rumbleSrc.start(t); rumbleSrc.stop(t + rumbleDur + 0.2);
+  };
 
-    // ── 3. Secondary echo rumble — distant reflection ──
-    const echoDelay = 0.3 + Math.random() * 0.8;
-    const echoLen   = Math.floor(actx.sampleRate * (rumbleDur * 0.7));
-    const echoBuf   = actx.createBuffer(1, echoLen, actx.sampleRate);
-    const echoData  = echoBuf.getChannelData(0);
-    let eLast = 0;
-    for (let i = 0; i < echoLen; i++) { const w = Math.random()*2-1; eLast=(eLast+0.015*w)/1.015; echoData[i]=eLast*14; }
-    const echoSrc = actx.createBufferSource(); echoSrc.buffer = echoBuf;
-    const echoLp  = actx.createBiquadFilter(); echoLp.type = 'lowpass'; echoLp.frequency.value = 90;
-    const echoEnv = actx.createGain();
-    const te = t + echoDelay;
-    echoEnv.gain.setValueAtTime(0, te);
-    echoEnv.gain.linearRampToValueAtTime(intensity * 0.28, te + 0.2);
-    echoEnv.gain.exponentialRampToValueAtTime(0.0001, te + rumbleDur * 0.7);
-    echoSrc.connect(echoLp); echoLp.connect(echoEnv); echoEnv.connect(g);
-    echoSrc.start(te); echoSrc.stop(te + rumbleDur * 0.7 + 0.2);
-
-    // Flash
-    triggerFlash();
-
-    setTimeout(strike,(8+Math.random()*24)*1000);
+  function openGuide(id) {
+    const g = guides[id];
+    document.getElementById('modalIcon').textContent = g.icon;
+    document.getElementById('modalTitle').textContent = g.title;
+    document.getElementById('modalBy').innerHTML = g.by;
+    document.getElementById('modalBody').innerHTML = g.html;
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  setTimeout(strike,(2+Math.random()*6)*1000);
-  g.gain.setTargetAtTime(thunderVol,actx.currentTime,0.5);
-
-  return ()=>{ alive=false; g.gain.setTargetAtTime(0,actx.currentTime,0.6); setTimeout(()=>{ try{g.disconnect();}catch(e){} },2500); };
-}
-
-function triggerFlash() {
-  const flash=document.getElementById('flash');
-  let t=0;
-  const seq=[0.7,0.1,0.85,0,0.3,0];
-  function step() {
-    if (t>=seq.length) { flash.style.opacity=0; return; }
-    flash.style.opacity=seq[t++];
-    setTimeout(step, t===1?40:t===2?30:t===3?60:t===4?40:80);
+  function closeGuide() {
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
   }
-  step();
-}
 
-async function ensureAudio() {
-  if (actx) return;
-  actx=new (window.AudioContext||window.webkitAudioContext)();
-  await actx.resume();
-  masterGain=actx.createGain(); masterGain.gain.value=rainVol;
-  masterGain.connect(actx.destination);
-}
-
-/* ═══ CONTROLS ═══ */
-const playBtn  = document.getElementById('play-btn');
-const status   = document.getElementById('status');
-const subtitle = document.getElementById('mode-subtitle');
-
-function setIcon(showPlay) {
-  playBtn.querySelector('svg').innerHTML = showPlay
-    ? `<polygon points="5,3 19,12 5,21" fill="#a8d4f0" stroke="none"/>`
-    : `<rect x="5" y="3" width="4" height="18" fill="#a8d4f0" rx="1"/>
-       <rect x="15" y="3" width="4" height="18" fill="#a8d4f0" rx="1"/>`;
-}
-
-playBtn.addEventListener('click', async () => {
-  await ensureAudio();
-  if (!playing) {
-    playing=true; targetAlpha=1; setIcon(false);
-    stopRain=buildRainAudio(currentType);
-    if (thunderOn) stopThunder=buildThunderAudio();
-    status.textContent='Playing · '+TYPES[currentType].label;
-  } else {
-    playing=false; targetAlpha=0; setIcon(true);
-    if (stopRain)    { stopRain();    stopRain=null; }
-    if (stopThunder) { stopThunder(); stopThunder=null; }
-    status.textContent='Paused';
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('modalBackdrop')) closeGuide();
   }
-});
 
-document.querySelectorAll('.rain-type-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    await ensureAudio();
-    document.querySelectorAll('.rain-type-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentType=btn.dataset.type;
-    document.getElementById('sky').style.background=TYPES[currentType].sky;
-    subtitle.textContent=TYPES[currentType].subtitle;
-    buildDrops();
-    if (playing) {
-      if (stopRain) { stopRain(); stopRain=null; }
-      stopRain=buildRainAudio(currentType);
-      status.textContent='Playing · '+TYPES[currentType].label;
-    }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo(); closeGuide(); } });
+
+  // ── FILTER + SEARCH ──
+  let activeFilter = 'all';
+
+  document.querySelectorAll('.filter-tab, .sidebar-nav a[data-filter]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      activeFilter = el.dataset.filter;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav a[data-filter]').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll(`[data-filter="${activeFilter}"]`).forEach(t => {
+        if (t.tagName === 'BUTTON' || t.tagName === 'A') t.classList.add('active');
+      });
+      applyFilters();
+    });
   });
-});
 
-const thunderToggle   = document.getElementById('thunder-toggle');
-const thunderVolRow   = document.getElementById('thunder-vol-row');
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
 
-thunderToggle.addEventListener('click', async () => {
-  await ensureAudio();
-  thunderOn=!thunderOn;
-  thunderToggle.textContent = thunderOn ? 'On' : 'Off';
-  thunderToggle.classList.toggle('on', thunderOn);
-  thunderVolRow.classList.toggle('active', thunderOn);
-  if (thunderOn && playing) {
-    stopThunder=buildThunderAudio();
-  } else if (!thunderOn && stopThunder) {
-    stopThunder(); stopThunder=null;
+  function applyFilters() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('.video-grid .video-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const cat = card.dataset.cat;
+      const title = card.dataset.title.toLowerCase();
+      const matchCat = activeFilter === 'all' || cat === activeFilter;
+      const matchQ = !q || title.includes(q);
+      if (matchCat && matchQ) { card.classList.remove('hidden'); visible++; }
+      else card.classList.add('hidden');
+    });
+    document.getElementById('videoCount').textContent = visible;
   }
-});
-
-document.getElementById('rain-vol').addEventListener('input', e => {
-  rainVol=e.target.value/100;
-  if (masterGain) masterGain.gain.setTargetAtTime(rainVol,actx.currentTime,0.1);
-});
-
-document.getElementById('thunder-vol').addEventListener('input', e => {
-  thunderVol=e.target.value/100;
-  if (thunderGainNode) thunderGainNode.gain.setTargetAtTime(thunderVol,actx.currentTime,0.1);
-});
 </script>
 </body>
 </html>
