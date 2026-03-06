@@ -1,1236 +1,1127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Heartwood Guides — Community Crafted</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Realm of Elderstone — Game Design Document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg:       #0d110e;
-    --bg2:      #121a14;
-    --bg3:      #192016;
-    --surface:  #1e2a1c;
-    --surface2: #243022;
-    --border:   #2e4028;
-    --gold:     #c9a84c;
-    --gold2:    #e8c96a;
-    --green:    #4a8c5c;
-    --green2:   #5fad74;
-    --text:     #d4cfc8;
-    --text2:    #8a9080;
-    --white:    #f0ede6;
-    --red:      #c45a3a;
+    --gold:      #c9a84c;
+    --gold-dim:  #8a6e2f;
+    --emerald:   #2a7a52;
+    --emerald-l: #3da86e;
+    --stone:     #0e0f0d;
+    --stone-1:   #141610;
+    --stone-2:   #1c1f18;
+    --stone-3:   #252920;
+    --stone-4:   #2e3328;
+    --parchment: #d4c89a;
+    --text:      #c8c3b0;
+    --text-dim:  #7a7568;
+    --accent:    #5fa87a;
+    --red:       #c0443a;
+    --border:    rgba(201,168,76,0.18);
   }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
+    background: var(--stone);
     color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
   }
 
-  /* ── TOP NAV ── */
-  .topnav {
-    position: sticky; top: 0; z-index: 100;
-    display: flex; align-items: center; gap: 16px;
-    padding: 0 28px;
-    height: 58px;
-    background: rgba(13,17,14,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
   }
-  .topnav-logo {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: .04em;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-  .topnav-logo span { color: var(--white); }
-  .topnav-sep { flex: 1; }
-  .topnav-links { display: flex; gap: 8px; }
-  .topnav-links a {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: .8rem; font-weight: 500;
-    color: var(--text2);
-    text-decoration: none;
-    border: 1px solid transparent;
-    transition: all .18s;
-  }
-  .topnav-links a:hover { color: var(--white); border-color: var(--border); background: var(--surface); }
-  .topnav-links a.discord { color: #7289da; border-color: rgba(114,137,218,.3); }
-  .topnav-links a.discord:hover { background: rgba(114,137,218,.1); }
+
+  /* ── LAYOUT ── */
+  .site-wrap { position: relative; z-index: 1; }
 
   /* ── HERO ── */
   .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
     position: relative;
     overflow: hidden;
-    padding: 72px 40px 64px;
-    text-align: center;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,140,92,.18) 0%, transparent 70%),
-                linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
-    border-bottom: 1px solid var(--border);
   }
+
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='1' cy='1' r='1' fill='%234a8c5c' fill-opacity='.08'/%3E%3C/svg%3E") repeat;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(42,122,82,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+
+  .hero-rune {
+    font-size: clamp(5rem, 14vw, 11rem);
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.08;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cinzel Decorative', serif;
     pointer-events: none;
+    user-select: none;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px;
-    border-radius: 99px;
-    background: rgba(201,168,76,.1);
-    border: 1px solid rgba(201,168,76,.3);
-    font-size: .72rem; font-weight: 600;
-    color: var(--gold);
-    letter-spacing: .08em; text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-  .hero h1 {
+
+  .hero-eyebrow {
     font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.15;
-    margin-bottom: 14px;
-  }
-  .hero h1 em { font-style: normal; color: var(--gold2); }
-  .hero p {
-    font-size: 1.05rem; color: var(--text2); max-width: 560px; margin: 0 auto 32px;
-    line-height: 1.7;
-  }
-  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-size: .88rem; font-weight: 600;
-    text-decoration: none;
-    border: none; cursor: pointer;
-    transition: all .18s;
-  }
-  .btn-primary {
-    background: var(--green);
-    color: #fff;
-  }
-  .btn-primary:hover { background: var(--green2); transform: translateY(-1px); }
-  .btn-outline {
-    background: transparent;
-    color: var(--gold);
-    border: 1px solid rgba(201,168,76,.4);
-  }
-  .btn-outline:hover { background: rgba(201,168,76,.08); transform: translateY(-1px); }
-
-  /* ── FEATURED ── */
-  .featured-wrap {
-    padding: 48px 40px 0;
-    max-width: 1200px; margin: 0 auto; width: 100%;
-  }
-  .section-label {
-    display: flex; align-items: center; gap: 10px;
-    font-size: .72rem; font-weight: 700;
-    letter-spacing: .12em; text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-  .section-label::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
-  .featured-card {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-    border-radius: 14px; overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--surface);
-  }
-  .featured-thumb {
-    position: relative; overflow: hidden;
-    aspect-ratio: 16/9;
-  }
-  .featured-thumb img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform .4s;
-  }
-  .featured-card:hover .featured-thumb img { transform: scale(1.04); }
-  .featured-play {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,.3);
-  }
-  .play-btn {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: rgba(201,168,76,.9);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .2s, background .2s;
-  }
-  .featured-card:hover .play-btn { transform: scale(1.1); background: var(--gold2); }
-  .play-btn svg { width: 22px; height: 22px; fill: #0d110e; margin-left: 3px; }
-  .featured-body {
-    padding: 36px 32px;
-    display: flex; flex-direction: column; justify-content: center; gap: 12px;
-  }
-  .featured-tag {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px; border-radius: 99px;
-    background: rgba(201,168,76,.15); border: 1px solid rgba(201,168,76,.25);
-    font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--gold); width: fit-content;
-  }
-  .featured-body h2 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.5rem; font-weight: 600;
-    color: var(--white); line-height: 1.3;
-  }
-  .featured-body p { font-size: .9rem; color: var(--text2); line-height: 1.65; }
-  .featured-meta {
-    font-size: .78rem; color: var(--text2);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .featured-meta strong { color: var(--gold); }
-
-  /* ── MAIN LAYOUT ── */
-  .main {
-    max-width: 1200px; margin: 0 auto; width: 100%;
-    padding: 48px 40px 80px;
-    display: grid; grid-template-columns: 220px 1fr; gap: 40px;
-  }
-
-  /* ── SIDEBAR ── */
-  .sidebar { flex-shrink: 0; }
-  .sidebar-section { margin-bottom: 28px; }
-  .sidebar-heading {
-    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--text2); margin-bottom: 8px; padding-left: 10px;
-  }
-  .sidebar-nav { list-style: none; }
-  .sidebar-nav li a {
-    display: flex; align-items: center; gap: 9px;
-    padding: 7px 10px; border-radius: 7px;
-    font-size: .86rem; font-weight: 500;
-    color: var(--text2); text-decoration: none;
-    transition: all .15s;
-    border: 1px solid transparent;
-  }
-  .sidebar-nav li a:hover,
-  .sidebar-nav li a.active {
-    color: var(--white); background: var(--surface2); border-color: var(--border);
-  }
-  .sidebar-nav li a.active { color: var(--gold); }
-  .sidebar-nav li a .nav-icon { font-size: .95rem; width: 18px; text-align: center; }
-  .sidebar-links { display: flex; flex-direction: column; gap: 6px; }
-  .sidebar-links a {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 12px; border-radius: 8px;
-    font-size: .84rem; font-weight: 500;
-    text-decoration: none; color: var(--text2);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    transition: all .15s;
-  }
-  .sidebar-links a:hover { color: var(--white); border-color: var(--green); }
-  .sidebar-links a.discord-link { color: #7289da; }
-  .sidebar-links a.discord-link:hover { border-color: #7289da; background: rgba(114,137,218,.08); }
-  .discord-cta {
-    margin-top: 4px;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(114,137,218,.25);
-    background: rgba(114,137,218,.06);
-    text-align: center;
-  }
-  .discord-cta p { font-size: .78rem; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
-  .discord-cta a {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px;
-    border-radius: 6px;
-    background: #5865f2;
-    color: #fff; text-decoration: none;
-    font-size: .8rem; font-weight: 600;
-    transition: background .15s;
-  }
-  .discord-cta a:hover { background: #4752c4; }
-
-  /* ── CONTENT AREA ── */
-  .content { min-width: 0; }
-
-  /* ── FILTERS ── */
-  .filters {
-    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-    margin-bottom: 28px;
-  }
-  .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-  .filter-tab {
-    padding: 6px 14px;
-    border-radius: 99px;
-    font-size: .8rem; font-weight: 500;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text2);
-    transition: all .15s;
-    font-family: 'Inter', sans-serif;
-  }
-  .filter-tab:hover { color: var(--white); border-color: var(--green); }
-  .filter-tab.active {
-    background: var(--green); border-color: var(--green);
-    color: #fff;
-  }
-  .search-wrap {
-    margin-left: auto;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1.5rem;
     position: relative;
   }
-  .search-wrap svg {
-    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-    width: 14px; height: 14px; opacity: .4; pointer-events: none;
-  }
-  .search-input {
-    padding: 6px 12px 6px 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--white);
-    font-size: .82rem;
-    font-family: 'Inter', sans-serif;
-    width: 200px;
-    transition: border-color .15s;
-  }
-  .search-input:focus { outline: none; border-color: var(--green); }
-  .search-input::placeholder { color: var(--text2); }
 
-  /* ── VIDEO GRID ── */
-  .section-header {
-    display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px;
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '◆';
+    margin: 0 1em;
+    font-size: 0.55rem;
+    opacity: 0.6;
   }
-  .section-header h3 {
-    font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--white);
-  }
-  .count-badge {
-    padding: 2px 8px; border-radius: 99px;
-    font-size: .72rem; font-weight: 600;
-    background: var(--surface2); color: var(--text2);
-    border: 1px solid var(--border);
-  }
-  .video-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;
-    margin-bottom: 48px;
-  }
-  .video-card {
-    border-radius: 10px; overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    cursor: pointer;
-    display: flex; flex-direction: column;
-    transition: border-color .2s, transform .2s;
-  }
-  .video-card:hover { border-color: var(--green); transform: translateY(-3px); }
-  .video-thumb {
-    position: relative; aspect-ratio: 16/9; overflow: hidden;
-    background: var(--bg3);
-  }
-  .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .video-thumb-overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,.25);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity .2s;
-  }
-  .video-card:hover .video-thumb-overlay { opacity: 1; }
-  .mini-play {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(201,168,76,.9);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .mini-play svg { width: 16px; height: 16px; fill: #0d110e; margin-left: 2px; }
-  .video-num {
-    position: absolute; top: 8px; left: 8px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(13,17,14,.75); backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,.1);
-    font-size: .68rem; font-weight: 700;
-    color: var(--text2);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .video-cat-badge {
-    position: absolute; top: 8px; right: 8px;
-    padding: 2px 8px; border-radius: 99px;
-    font-size: .65rem; font-weight: 700; letter-spacing: .04em;
-    backdrop-filter: blur(6px);
-  }
-  .cat-combat   { background: rgba(196,90,58,.75); color: #ffd0c0; }
-  .cat-money    { background: rgba(201,168,76,.75); color: #0d110e; }
-  .cat-skilling { background: rgba(74,140,92,.75);  color: #d0ffd8; }
-  .cat-guide    { background: rgba(80,100,160,.75); color: #d0d8ff; }
-  .video-info { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
-  .video-info h4 {
-    font-size: .88rem; font-weight: 600; color: var(--white);
-    line-height: 1.35;
-  }
-  .video-info p { font-size: .78rem; color: var(--text2); line-height: 1.5; flex: 1; }
-  .video-date { font-size: .72rem; color: var(--text2); }
-  .video-watch {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: .75rem; font-weight: 600; color: var(--green2);
-    margin-top: 4px;
-  }
-  .video-watch svg { width: 11px; height: 11px; }
 
-  /* ── WRITTEN GUIDES ── */
-  .written-guides { display: flex; flex-direction: column; gap: 14px; }
-  .guide-card {
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    overflow: hidden;
-  }
-  .guide-header {
-    display: flex; align-items: center; gap: 14px;
-    padding: 16px 20px;
-    cursor: pointer;
-    transition: background .15s;
-    user-select: none;
-  }
-  .guide-header:hover { background: var(--surface2); }
-  .guide-icon {
-    width: 36px; height: 36px; border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; flex-shrink: 0;
-  }
-  .guide-meta { flex: 1; }
-  .guide-meta h4 { font-size: .92rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
-  .guide-meta-row {
-    display: flex; align-items: center; gap: 8px;
-    font-size: .75rem; color: var(--text2);
-  }
-  .guide-cat-tag {
-    padding: 1px 7px; border-radius: 99px;
-    font-size: .68rem; font-weight: 600;
-    background: rgba(74,140,92,.15); color: var(--green2);
-    border: 1px solid rgba(74,140,92,.2);
-  }
-  .guide-arrow {
-    width: 28px; height: 28px; border-radius: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s, border-color .15s;
-    flex-shrink: 0;
-  }
-  .guide-arrow svg { width: 13px; height: 13px; stroke: var(--text2); }
-  .guide-card:hover .guide-arrow { background: var(--green); border-color: var(--green); }
-  .guide-card:hover .guide-arrow svg { stroke: #fff; }
-
-  /* ── GUIDE MODAL ── */
-  .modal-backdrop {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.7);
-    backdrop-filter: blur(6px);
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s;
-  }
-  .modal-backdrop.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    width: 100%; max-width: 680px;
-    max-height: 85vh;
-    display: flex; flex-direction: column;
-    transform: translateY(24px) scale(.97);
-    transition: transform .28s cubic-bezier(.22,.68,0,1.2);
-    overflow: hidden;
-  }
-  .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
-  .modal-header {
-    display: flex; align-items: center; gap: 14px;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .modal-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    border: 1px solid var(--border); background: var(--bg3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; flex-shrink: 0;
-  }
-  .modal-title { flex: 1; }
-  .modal-title h3 {
-    font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--white);
-    margin-bottom: 2px;
-  }
-  .modal-title .modal-by { font-size: .78rem; color: var(--text2); }
-  .modal-title .modal-by span { color: var(--gold); }
-  .modal-close {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--surface2); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-    transition: background .15s;
-  }
-  .modal-close:hover { background: rgba(196,90,58,.3); border-color: var(--red); }
-  .modal-close svg { width: 14px; height: 14px; stroke: var(--text2); }
-  .modal-body {
-    overflow-y: auto; padding: 24px;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-  .modal-body::-webkit-scrollbar { width: 5px; }
-  .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-
-  /* ── VIDEO MODAL ── */
-  .video-modal-backdrop {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.85);
-    backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s;
-  }
-  .video-modal-backdrop.open { opacity: 1; pointer-events: all; }
-  .video-modal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    width: 100%; max-width: 860px;
-    transform: translateY(28px) scale(.97);
-    transition: transform .28s cubic-bezier(.22,.68,0,1.2);
-    overflow: hidden;
-  }
-  .video-modal-backdrop.open .video-modal { transform: translateY(0) scale(1); }
-  .video-modal-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-  }
-  .video-modal-header .vm-cat {
-    padding: 3px 10px; border-radius: 99px;
-    font-size: .68rem; font-weight: 700; letter-spacing: .04em;
-  }
-  .video-modal-title {
-    flex: 1; font-size: .92rem; font-weight: 600; color: var(--white);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .video-modal-meta { font-size: .75rem; color: var(--text2); white-space: nowrap; }
-  .video-modal-close {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--surface2); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-    transition: background .15s;
-  }
-  .video-modal-close:hover { background: rgba(196,90,58,.3); border-color: var(--red); }
-  .video-modal-close svg { width: 14px; height: 14px; stroke: var(--text2); }
-  .video-embed {
-    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
-    background: #000;
-  }
-  .video-embed iframe {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    border: none;
-  }
-  .video-modal-footer {
-    padding: 14px 18px;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-  }
-  .video-modal-desc { font-size: .82rem; color: var(--text2); line-height: 1.5; }
-  .yt-link {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 14px; border-radius: 6px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-size: .78rem; font-weight: 500; color: var(--text2);
-    text-decoration: none; white-space: nowrap;
-    transition: all .15s;
-  }
-  .yt-link:hover { border-color: #ff4444; color: #ff6666; }
-
-  /* tables */
-  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .82rem; }
-  th {
-    text-align: left; padding: 7px 12px;
-    background: var(--bg3); color: var(--gold);
-    font-weight: 600; font-size: .75rem; letter-spacing: .04em;
-    border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 7px 12px; border-bottom: 1px solid rgba(46,64,40,.5);
-    color: var(--text); vertical-align: top;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:nth-child(even) td { background: rgba(0,0,0,.12); }
-
-  /* prose in guide */
-  .modal-body p { font-size: .85rem; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
-  .modal-body strong { color: var(--white); font-weight: 600; }
-  .modal-body ul { padding-left: 18px; margin: 8px 0 12px; }
-  .modal-body ul li { font-size: .85rem; color: var(--text2); line-height: 1.65; margin-bottom: 4px; }
-  .modal-body h5 {
-    font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--green2); margin: 16px 0 6px;
-  }
-  .guide-tip {
-    margin-top: 12px; padding: 10px 14px;
-    border-radius: 7px;
-    border-left: 3px solid var(--gold);
-    background: rgba(201,168,76,.07);
-    font-size: .82rem; color: var(--text); line-height: 1.6;
-  }
-  .atlas-link {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 12px;
-    padding: 6px 14px; border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    font-size: .8rem; font-weight: 500;
+  .hero h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 700;
     color: var(--gold);
-    text-decoration: none;
-    transition: all .15s;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    position: relative;
+    text-shadow: 0 0 60px rgba(201,168,76,0.25), 0 2px 4px rgba(0,0,0,0.6);
+    margin-bottom: 0.3em;
   }
-  .atlas-link:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
+
+  .hero-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .hero-vision {
+    max-width: 680px;
+    font-size: 1.15rem;
+    color: var(--parchment);
+    font-style: italic;
+    font-weight: 300;
+    position: relative;
+    padding: 1.8rem 2.4rem;
+    border: 1px solid var(--border);
+    background: rgba(201,168,76,0.04);
+    margin-bottom: 3rem;
+  }
+
+  .hero-vision::before, .hero-vision::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.6;
+  }
+  .hero-vision::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .hero-vision::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  .scroll-cue {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    animation: bob 2.5s ease-in-out infinite;
+  }
+
+  .scroll-cue svg { opacity: 0.4; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(6px); }
+  }
+
+  /* ── NAV ── */
+  .top-nav {
+    position: sticky;
+    top: 0; z-index: 100;
+    background: rgba(14,15,13,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.75rem;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-right: 2rem;
+    padding: 1rem 0;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+
+  .nav-inner a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 1rem 0.9rem;
+    white-space: nowrap;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    flex-shrink: 0;
+  }
+
+  .nav-inner a:hover { color: var(--gold); border-bottom-color: var(--gold-dim); }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 5rem 0 2rem;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 0.15em;
+  }
+
+  .section h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold-dim), transparent);
+    opacity: 0.4;
+  }
+
+  /* ── SUB-HEADS ── */
+  .sub-h {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin: 2.5rem 0 1rem;
+    text-transform: uppercase;
+  }
+
+  /* ── PARAGRAPHS ── */
+  p { margin-bottom: 1.1rem; color: var(--text); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--gold);
+    background: rgba(201,168,76,0.05);
+    padding: 1.2rem 1.6rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--parchment);
+    font-size: 1.05rem;
+    position: relative;
+  }
+
+  .callout::before {
+    content: '⚜';
+    position: absolute;
+    top: -0.7rem; left: 1.2rem;
+    background: var(--stone);
+    padding: 0 0.4rem;
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--gold);
+  }
+
+  /* ── BULLET LIST ── */
+  .item-list { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; margin: 1rem 0 1.5rem; }
+
+  .item-list li {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .item-list li:hover {
+    border-color: var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .item-list li::before {
+    content: '◆';
+    color: var(--gold);
+    font-size: 0.5rem;
+    margin-top: 0.55rem;
+    flex-shrink: 0;
+  }
+
+  .item-list strong { color: var(--parchment); font-weight: 600; }
+
+  /* ── SKILL TABLE ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .skill-card {
+    background: var(--stone-2);
+    padding: 1rem 1.2rem;
+    transition: background 0.2s;
+  }
+
+  .skill-card:hover { background: var(--stone-3); }
+
+  .skill-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--parchment);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+  }
+
+  .skill-cat {
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.45rem;
+  }
+
+  .cat-combat    { color: var(--red); }
+  .cat-gathering { color: var(--accent); }
+  .cat-artisan   { color: var(--gold); }
+  .cat-support   { color: #7ab0d4; }
+
+  .skill-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* ── CATEGORY LEGEND ── */
+  .cat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .cat-legend span { display: flex; align-items: center; gap: 0.5rem; }
+  .cat-legend span::before { content: '■'; font-size: 0.6rem; }
+  .combat-leg::before { color: var(--red) !important; }
+  .gathering-leg::before { color: var(--accent) !important; }
+  .artisan-leg::before { color: var(--gold) !important; }
+  .support-leg::before { color: #7ab0d4 !important; }
+
+  /* ── PVP ZONE CARDS ── */
+  .zone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .zone-card {
+    border: 1px solid var(--border);
+    background: var(--stone-2);
+    padding: 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .zone-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+
+  .zone-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+  }
+
+  .zone-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.6rem;
+  }
+
+  .zone-desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.55; }
+
+  /* ── BOND EXPLAINER ── */
+  .bond-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .bond-node {
+    background: var(--stone-3);
+    border: 1px solid var(--border);
+    padding: 1.2rem 0.8rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--parchment);
+  }
+
+  .bond-arrow {
+    color: var(--gold);
+    font-size: 1.4rem;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 600px) {
+    .bond-flow { grid-template-columns: 1fr; }
+    .bond-arrow { transform: rotate(90deg); }
+  }
+
+  /* ── REGION CARDS ── */
+  .region-list { display: flex; flex-direction: column; gap: 0; margin: 1.5rem 0; }
+
+  .region-item {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--stone-2);
+    transition: background 0.2s;
+  }
+
+  .region-item:first-child { border-top: 1px solid var(--border); }
+  .region-item:hover { background: var(--stone-3); }
+
+  .region-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold);
+    padding: 1rem 1.2rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.04em;
+  }
+
+  .region-desc { padding: 1rem 1.2rem; font-size: 0.95rem; color: var(--text-dim); }
+
+  @media (max-width: 560px) {
+    .region-item { grid-template-columns: 1fr; }
+    .region-name { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+
+  /* ── MONETISATION ── */
+  .mono-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 580px) { .mono-split { grid-template-columns: 1fr; } }
+
+  .mono-col {
+    border: 1px solid var(--border);
+    padding: 1.4rem;
+  }
+
+  .mono-col.yes { border-top: 2px solid var(--accent); }
+  .mono-col.no  { border-top: 2px solid var(--red); }
+
+  .mono-head {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .mono-col.yes .mono-head { color: var(--accent); }
+  .mono-col.no  .mono-head { color: var(--red); }
+
+  .mono-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem; }
+
+  .mono-list li { padding-left: 1.2rem; position: relative; color: var(--text-dim); }
+
+  .mono-col.yes .mono-list li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  .mono-col.no  .mono-list li::before { content: '✗'; position: absolute; left: 0; color: var(--red); }
+
+  /* ── ROADMAP ── */
+  .roadmap { position: relative; padding-left: 2.5rem; margin: 1.5rem 0; }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 0.45rem; top: 0.8rem; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  }
+
+  .phase { margin-bottom: 2.5rem; position: relative; }
+
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: -2.12rem; top: 0.7rem;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 12px rgba(201,168,76,0.5);
+  }
+
+  .phase-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  /* ── APPENDIX ── */
+  .appendix-block {
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    margin: 1.5rem 0;
+    background: var(--stone-2);
+    position: relative;
+  }
+
+  .appendix-q {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--parchment);
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.04em;
+  }
 
   /* ── FOOTER ── */
   footer {
+    text-align: center;
+    padding: 3rem 2rem;
     border-top: 1px solid var(--border);
-    padding: 24px 40px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    font-size: .78rem; color: var(--text2);
-  }
-  footer a { color: var(--text2); text-decoration: none; }
-  footer a:hover { color: var(--white); }
-  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: .9rem; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .featured-card { grid-template-columns: 1fr; }
-    .featured-body { padding: 24px; }
-    .main { grid-template-columns: 1fr; gap: 28px; }
-    .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .discord-cta { grid-column: span 2; }
-    .featured-wrap, .main { padding-left: 20px; padding-right: 20px; }
-    .hero { padding: 48px 20px 40px; }
-  }
-  @media (max-width: 600px) {
-    .sidebar { grid-template-columns: 1fr; }
-    .discord-cta { grid-column: span 1; }
-    .topnav-links a span { display: none; }
-    .video-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 440px) {
-    .video-grid { grid-template-columns: 1fr; }
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
   }
 
-  /* hidden */
-  .hidden { display: none !important; }
+  footer strong { color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 2rem;
+    opacity: 0.35;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .divider span { color: var(--gold); font-size: 0.6rem; }
 </style>
 </head>
 <body>
+<div class="site-wrap">
 
-<!-- TOP NAV -->
-<nav class="topnav">
-  <a href="#" class="topnav-logo">Heart<span>wood</span></a>
-  <div class="topnav-sep"></div>
-  <div class="topnav-links">
-    <a href="https://discord.gg/cRA8Xm2zD2" target="_blank" class="discord">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4A17.5 17.5 0 0 0 15.8 2.6a.1.1 0 0 0-.1 0c-.2.4-.4.8-.6 1.2a16.2 16.2 0 0 0-6.2 0A13 13 0 0 0 8.4 2.6a.1.1 0 0 0-.1 0A17.4 17.4 0 0 0 3.7 4 17.9 17.9 0 0 0 1 18.4 17.6 17.6 0 0 0 6.4 21a.1.1 0 0 0 .1 0c.4-.6.8-1.2 1.1-1.9a.1.1 0 0 0-.1-.1 11.6 11.6 0 0 1-1.6-.8.1.1 0 0 1 0-.1l.3-.3a.1.1 0 0 1 .1 0 12.6 12.6 0 0 0 10.6 0 .1.1 0 0 1 .1 0l.3.3a.1.1 0 0 1 0 .1 11 11 0 0 1-1.7.8.1.1 0 0 0 0 .1c.4.7.7 1.3 1.1 1.9a.1.1 0 0 0 .1 0 17.5 17.5 0 0 0 5.4-2.6A17.9 17.9 0 0 0 23 4zM8.5 15.6c-1.3 0-2.4-1.2-2.4-2.8 0-1.5 1-2.7 2.4-2.7 1.3 0 2.4 1.2 2.3 2.7 0 1.6-1 2.8-2.3 2.8zm7 0c-1.3 0-2.4-1.2-2.4-2.8 0-1.5 1-2.7 2.4-2.7 1.3 0 2.4 1.2 2.3 2.7 0 1.6-1 2.8-2.3 2.8z"/></svg>
-      <span>Discord</span>
-    </a>
-    <a href="https://heartwoodonline.com" target="_blank">
-      🌿 <span>Play</span>
-    </a>
-    <a href="https://heartwoodatlas.com" target="_blank">
-      🗺️ <span>Atlas</span>
-    </a>
-  </div>
-</nav>
-
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-badge">⚔️ Community Crafted</div>
-  <h1>Master <em>Heartwood</em><br>from Level One</h1>
-  <p>Community-crafted guides covering combat, skilling, money-making and more. Everything you need to thrive in Heartwood Online.</p>
-  <div class="hero-btns">
-    <a href="#guides" class="btn btn-primary">📜 Browse Guides</a>
-    <a href="https://heartwoodonline.com" target="_blank" class="btn btn-outline">🌿 Play the Game</a>
+  <div class="hero-rune">⚜</div>
+  <p class="hero-eyebrow">Game Design Document — v1.0 — Confidential</p>
+  <h1>Realm of<br>Elderstone</h1>
+  <p class="hero-subtitle">An Open World MMORPG</p>
+  <blockquote class="hero-vision">
+    Recapturing the soul of classic skill-based adventures while building a fair, modern economy. Master dozens of skills, trade freely on a player-driven market, and forge your own path — peaceful craftsman, dungeon delver, or feared warrior.
+  </blockquote>
+  <div class="scroll-cue">
+    <span>Scroll to explore</span>
+    <svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M8 1v20M1 14l7 7 7-7"/>
+    </svg>
   </div>
 </section>
 
-<!-- FEATURED -->
-<div class="featured-wrap">
-  <div class="section-label">★ Featured Guide</div>
-  <div class="featured-card">
-    <div class="featured-thumb" onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" style="cursor:pointer">
-      <img src="https://img.youtube.com/vi/cDULmT1YcDM/maxresdefault.jpg" alt="Ultimate Combat Guide" />
-      <div class="featured-play">
-        <div class="play-btn">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
-      </div>
-    </div>
-    <div class="featured-body">
-      <div class="featured-tag">⚔️ Combat</div>
-      <h2>Ultimate Heartwood Online Combat Guide</h2>
-      <p>Level 1–50 walkthrough — what to kill and where to go. The definitive combat resource by community member Jord.</p>
-      <div class="featured-meta">By <strong>Jord</strong> &nbsp;·&nbsp; Mar 3, 2026</div>
-      <button onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" class="btn btn-primary" style="width:fit-content;margin-top:8px;border:none;cursor:pointer">
-        ▶ Watch Now
-      </button>
-    </div>
+<!-- ── NAV ── -->
+<nav class="top-nav">
+  <div class="nav-inner">
+    <div class="nav-logo">Elderstone GDD</div>
+    <a href="#overview">Overview</a>
+    <a href="#skills">Skills</a>
+    <a href="#combat">Combat</a>
+    <a href="#pvp">PvP</a>
+    <a href="#economy">Economy</a>
+    <a href="#bonds">Bonds</a>
+    <a href="#world">World</a>
+    <a href="#quests">Quests</a>
+    <a href="#monetisation">Monetisation</a>
+    <a href="#anticheat">Fair Play</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#appendix">Appendix</a>
   </div>
-</div>
+</nav>
 
-<!-- MAIN -->
-<div class="main" id="guides">
+<main class="content">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-heading">Browse</div>
-      <ul class="sidebar-nav">
-        <li><a href="#" class="active" data-filter="all"><span class="nav-icon">📜</span> All Guides</a></li>
-        <li><a href="#" data-filter="combat"><span class="nav-icon">⚔️</span> Combat</a></li>
-        <li><a href="#" data-filter="money"><span class="nav-icon">💰</span> Money Makers</a></li>
-        <li><a href="#" data-filter="skilling"><span class="nav-icon">🪵</span> Skilling</a></li>
-        <li><a href="#" data-filter="guide"><span class="nav-icon">🗺️</span> Guides</a></li>
-      </ul>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-heading">Links</div>
-      <div class="sidebar-links">
-        <a href="https://discord.gg/cRA8Xm2zD2" target="_blank" class="discord-link">💬 Discord</a>
-        <a href="https://heartwoodonline.com" target="_blank">🌿 Play the Game</a>
-        <a href="https://heartwoodatlas.com" target="_blank">🗺️ Heartwood Atlas</a>
-      </div>
-    </div>
-
-    <div class="discord-cta">
-      <p>More tips & live help in our community.</p>
-      <a href="https://discord.gg/cRA8Xm2zD2" target="_blank">Join Discord ↗</a>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <div class="content">
-    <!-- FILTERS -->
-    <div class="filters">
-      <div class="filter-tabs">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="combat">Combat</button>
-        <button class="filter-tab" data-filter="money">Money</button>
-        <button class="filter-tab" data-filter="skilling">Skilling</button>
-        <button class="filter-tab" data-filter="guide">Guides</button>
-      </div>
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input class="search-input" type="text" id="searchInput" placeholder="Search guides…" />
-      </div>
-    </div>
-
-    <!-- VIDEO GUIDES -->
+  <!-- ── 1. OVERVIEW ── -->
+  <section class="section" id="overview">
     <div class="section-header">
-      <h3>Video Guides</h3>
-      <span class="count-badge" id="videoCount">12</span>
+      <span class="section-num">01</span>
+      <h2>Game Overview</h2>
+      <div class="section-rule"></div>
     </div>
-    <div class="video-grid" id="videoGrid">
 
-      <div class="video-card" onclick="openVideo('j5ft6unpKP8','How To Change Server','guide','New player? Don\'t know how to change server? Try this!','Mar 4, 2026')" data-cat="guide" data-title="How To Change Server">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/j5ft6unpKP8/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">01</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>How To Change Server</h4>
-          <p>New player? Don't know how to change server? Try this!</p>
-          <span class="video-date">Mar 4, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
+    <div class="sub-h">Genre & Platform</div>
+    <ul class="item-list">
+      <li><strong>Genre:</strong> Massively Multiplayer Online Role-Playing Game (MMORPG)</li>
+      <li><strong>Platform:</strong> PC (Windows, macOS, Linux); mobile companion app for inventory & market access</li>
+      <li><strong>Perspective:</strong> Fixed isometric camera with optional zoom and rotation</li>
+      <li><strong>Setting:</strong> The vast fantasy world of Elderstone — distinct biomes, cities, and ancient ruins</li>
+    </ul>
 
-      <div class="video-card" onclick="openVideo('FAID9PP19Q4','How To Find Fishing Hotspots','guide','Let Guenne Divillizen show you how to find fishing hotspots.','Mar 4, 2026')" data-cat="guide" data-title="How To Find Fishing Hotspots">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/FAID9PP19Q4/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">02</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>How To Find Fishing Hotspots</h4>
-          <p>Let Guenne Divillizen show you how to find fishing hotspots.</p>
-          <span class="video-date">Mar 4, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
+    <div class="sub-h">Core Pillars</div>
+    <ul class="item-list">
+      <li><strong>Skill Mastery</strong> — 28 interlocking skills reward long-term progression without hard gates</li>
+      <li><strong>Player Economy</strong> — All tradeable items flow through a live player market; the game never competes with players</li>
+      <li><strong>Fair Play</strong> — Bonds eliminate gold-selling by letting players exchange premium currency for in-game gold</li>
+      <li><strong>Consent-Based PvP</strong> — No forced PvP. Competitive play is always opt-in and richly rewarded</li>
+      <li><strong>Enduring World</strong> — Seasonal content, world events, and player-built structures keep the world alive for years</li>
+    </ul>
+  </section>
 
-      <div class="video-card" onclick="openVideo('OS_wzAeHaX0','How To Prepare for Shadowfang','guide','Want some tips on how to prepare for Shadowfang?','Mar 4, 2026')" data-cat="guide" data-title="How To Prepare for Shadowfang">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/OS_wzAeHaX0/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">03</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>How To Prepare for Shadowfang</h4>
-          <p>Want some tips on how to prepare for Shadowfang?</p>
-          <span class="video-date">Mar 4, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('cDULmT1YcDM','Ultimate Heartwood Online Combat Guide','combat','Level 1–50 walkthrough — what to kill and where to go. By Jord.','Mar 3, 2026')" data-cat="combat" data-title="Ultimate Heartwood Online Combat Guide">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/cDULmT1YcDM/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">04</div>
-          <div class="video-cat-badge cat-combat">Combat</div>
-        </div>
-        <div class="video-info">
-          <h4>Ultimate Heartwood Online Combat Guide</h4>
-          <p>Level 1–50 walkthrough — what to kill and where to go. By Jord.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('s30La5wFfsY','How Much Can You Make Killing Silkworms?','money','Testing silkworm profits — is it worth your time?','Mar 3, 2026')" data-cat="money" data-title="How Much Can You Make Killing Silkworms">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/s30La5wFfsY/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">05</div>
-          <div class="video-cat-badge cat-money">Money</div>
-        </div>
-        <div class="video-info">
-          <h4>How Much Can You Make Killing Silkworms?</h4>
-          <p>Testing silkworm profits — is it worth your time?</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('06IY-NpMFU4','Killing Yellow Hats for 1 Hour!','money','Full hour of yellow hat grinding — here\'s the final gold count.','Mar 3, 2026')" data-cat="money" data-title="Killing Yellow Hats for 1 Hour">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/06IY-NpMFU4/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">06</div>
-          <div class="video-cat-badge cat-money">Money</div>
-        </div>
-        <div class="video-info">
-          <h4>Killing Yellow Hats for 1 Hour!</h4>
-          <p>Full hour of yellow hat grinding — here's the final gold count.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('uFSELw1lMLM','Where To Chop All Trees in Game','skilling','Every tree location in Heartwood Online — quick visual tour.','Mar 3, 2026')" data-cat="skilling" data-title="Where To Chop All Trees in Game">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/uFSELw1lMLM/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">07</div>
-          <div class="video-cat-badge cat-skilling">Skilling</div>
-        </div>
-        <div class="video-info">
-          <h4>Where To Chop All Trees in Game</h4>
-          <p>Every tree location in Heartwood Online — quick visual tour.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('01Plp1MWj_0','How To Use the Bulk Market!','guide','Beginner-friendly walkthrough of the Bulk Market. By One.','Mar 3, 2026')" data-cat="guide" data-title="How To Use the Bulk Market">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/01Plp1MWj_0/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">08</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>How To Use the Bulk Market!</h4>
-          <p>Beginner-friendly walkthrough of the Bulk Market. By One.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('z5wMUNou_EY','Best Gin Berry Farming Spot','guide','One reveals the top gin berry location in the game.','Mar 3, 2026')" data-cat="guide" data-title="Best Gin Berry Farming Spot">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/z5wMUNou_EY/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">09</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>Best Gin Berry Farming Spot</h4>
-          <p>One reveals the top gin berry location in the game.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('nAaeextA-BI','#1 Turnip Farming Spot','guide','One shows the absolute best place to farm turnips.','Mar 3, 2026')" data-cat="guide" data-title="Number 1 Turnip Farming Spot">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/nAaeextA-BI/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">10</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>#1 Turnip Farming Spot</h4>
-          <p>One shows the absolute best place to farm turnips.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('qkdJ-BixxJE','Best Coal Farming Spot','guide','One shows where to mine coal as efficiently as possible.','Mar 3, 2026')" data-cat="guide" data-title="Best Coal Farming Spot">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/qkdJ-BixxJE/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">11</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>Best Coal Farming Spot</h4>
-          <p>One shows where to mine coal as efficiently as possible.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-      <div class="video-card" onclick="openVideo('PKiL_8fjI4s','Best Cotton Farming Spot','guide','One reveals where to farm cotton quickly and efficiently.','Mar 3, 2026')" data-cat="guide" data-title="Best Cotton Farming Spot">
-        <div class="video-thumb">
-          <img src="https://img.youtube.com/vi/PKiL_8fjI4s/hqdefault.jpg" alt="" />
-          <div class="video-thumb-overlay"><div class="mini-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="video-num">12</div>
-          <div class="video-cat-badge cat-guide">Guide</div>
-        </div>
-        <div class="video-info">
-          <h4>Best Cotton Farming Spot</h4>
-          <p>One reveals where to farm cotton quickly and efficiently.</p>
-          <span class="video-date">Mar 3, 2026</span>
-          <span class="video-watch">Watch ↗ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
-        </div>
-      </div>
-
-    </div><!-- /video-grid -->
-
-    <!-- WRITTEN GUIDES -->
+  <!-- ── 2. SKILLS ── -->
+  <section class="section" id="skills">
     <div class="section-header">
-      <h3>Written Guides</h3>
-      <span class="count-badge">3</span>
+      <span class="section-num">02</span>
+      <h2>Skills System</h2>
+      <div class="section-rule"></div>
     </div>
-    <div class="written-guides">
 
-      <!-- CARPENTRY -->
-      <div class="guide-card" onclick="openGuide('carpentry')" style="cursor:pointer">
-        <div class="guide-header">
-          <div class="guide-icon">🪚</div>
-          <div class="guide-meta">
-            <h4>Carpentry General Guide</h4>
-            <div class="guide-meta-row">
-              <span class="guide-cat-tag">Skilling</span>
-              <span>By Ninia</span>
-            </div>
-          </div>
-          <div class="guide-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </div>
-        </div>
+    <p>Elderstone features <strong>28 skills</strong> split across four categories. Every skill runs from level 1 to 120, with a visible cap of 99 and a hidden mastery tier above it that unlocks prestige cosmetics and minor passive bonuses. No skill is mandatory — players are free to focus on whatever they enjoy.</p>
+
+    <div class="sub-h">Skill Progression</div>
+    <ul class="item-list">
+      <li><strong>Experience Curve</strong> — XP requirements roughly double every 7 levels, keeping early progress fast and endgame meaningful</li>
+      <li><strong>Milestone Rewards</strong> — Every 10 levels grants a cosmetic title, emote, or passive bonus (e.g. Mining 50 = +5% ore chance)</li>
+      <li><strong>Level 99 Cape</strong> — Reaching 99 in any skill awards a Skill Cape with a unique animation and passive perk</li>
+      <li><strong>Level 120 Mastery</strong> — Unlocks a trimmed cape variant and one powerful passive unique to that skill</li>
+      <li><strong>Total Level</strong> — Sum of all 28 skill levels; displayed on the player profile and used for leaderboard ranking</li>
+    </ul>
+
+    <div class="sub-h">Skill Directory</div>
+    <div class="cat-legend">
+      <span class="combat-leg" style="color:var(--red)">Combat</span>
+      <span class="gathering-leg" style="color:var(--accent)">Gathering</span>
+      <span class="artisan-leg" style="color:var(--gold)">Artisan</span>
+      <span class="support-leg" style="color:#7ab0d4">Support</span>
+    </div>
+
+    <div class="skills-grid" id="skillsGrid"></div>
+
+    <div class="sub-h">Skill Interactions</div>
+    <p>Skills are deliberately interlocked so that specialisation is valuable but no single player can be entirely self-sufficient without significant investment.</p>
+    <ul class="item-list">
+      <li><strong>Mining + Smithing</strong> — Mine ore, smelt bars, forge gear — the classic production chain</li>
+      <li><strong>Farming + Herblore</strong> — Grow herbs on patches, brew potions for combat or sale</li>
+      <li><strong>Woodcutting + Fletching + Ranged</strong> — Chop logs, craft bows and arrows, equip and use them</li>
+      <li><strong>Slayer + Combat</strong> — Slayer tasks send players to specific monsters; high-level tasks need high combat</li>
+      <li><strong>Dungeoneering + All Skills</strong> — Floor difficulty scales with the party's average total level; every skill has uses inside</li>
+      <li><strong>Cartography + Agility</strong> — Higher Agility unlocks shortcuts; Cartography reveals where those shortcuts lead</li>
+    </ul>
+  </section>
+
+  <!-- ── 3. COMBAT ── -->
+  <section class="section" id="combat">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Combat System</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <p>Combat is real-time with a one-tick action queue — players can queue one action ahead (attack, special, eat food, switch prayer), giving skilled players a meaningful edge without making combat inaccessible to newcomers.</p>
+
+    <div class="sub-h">Combat Styles</div>
+    <ul class="item-list">
+      <li><strong>Melee</strong> — Three sub-styles (Slash, Stab, Crush), each strong against different enemy armour types</li>
+      <li><strong>Ranged</strong> — Long range, lower defence requirement; arrows and bolts carry varying special effects</li>
+      <li><strong>Magic</strong> — Elemental, Ancient, and Lunar spellbooks; can autocast or be manually triggered</li>
+      <li><strong>Hybrid</strong> — Players can switch styles mid-fight; gear switching is a high skill-ceiling activity</li>
+    </ul>
+
+    <div class="sub-h">The Prayer System</div>
+    <p>Prayer points are spent to activate temporary buffs — attack boosts, protection prayers that reduce incoming damage by 50%, or utility prayers like eagle eye and rapid restore. Points restore at altars, via buried bones, or through Prayer potions.</p>
+
+    <div class="sub-h">Summoning in Combat</div>
+    <p>Spirit familiars can be summoned using crafted pouches. Combat familiars deal supplemental damage or provide special scroll abilities. Non-combat familiars carry extra inventory space, gather resources passively, or provide skill boosts.</p>
+  </section>
+
+  <!-- ── 4. PVP ── -->
+  <section class="section" id="pvp">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Optional PvP</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="callout">PvP is never forced. Players will never lose items to PvP without having actively chosen to enter a PvP zone or game mode. The border of every PvP area shows a clear warning prompt.</div>
+
+    <div class="sub-h">The Wilderness</div>
+    <p>The Wilderness is a large northern region of the world map. Entering it is a deliberate choice — a warning prompt appears at the border.</p>
+    <ul class="item-list">
+      <li><strong>Risk vs Reward</strong> — The deepest Wilderness areas contain the rarest resource spawns, dungeons, and boss encounters</li>
+      <li><strong>Item Protection</strong> — By default, players protect their 3 most valuable items on death; a skull mechanic removes this protection for aggressors</li>
+      <li><strong>Level Brackets</strong> — PvP zones are divided by combat level range (50–70, 70–100, 100+) to prevent unfair predation</li>
+      <li><strong>Escape Mechanics</strong> — Teleport spells work up to level 30 Wilderness; beyond that, agility shortcuts and terrain knowledge are your tools</li>
+    </ul>
+
+    <div class="sub-h">Opt-In Arenas</div>
+    <div class="zone-grid">
+      <div class="zone-card">
+        <div class="zone-title">⚔ Duel Arena</div>
+        <div class="zone-desc">1v1 wagers with custom rule sets — no prayer, no potions, specific weapon styles. Fully consensual risk.</div>
       </div>
-
-      <!-- LEATHERWORKING -->
-      <div class="guide-card" onclick="openGuide('leather')" style="cursor:pointer">
-        <div class="guide-header">
-          <div class="guide-icon">🧵</div>
-          <div class="guide-meta">
-            <h4>Leatherworking Guide</h4>
-            <div class="guide-meta-row">
-              <span class="guide-cat-tag">Skilling</span>
-              <span>By Akor</span>
-            </div>
-          </div>
-          <div class="guide-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </div>
-        </div>
+      <div class="zone-card">
+        <div class="zone-title">🏰 Castle Wars</div>
+        <div class="zone-desc">Team-based capture-the-flag in a dedicated instanced arena. Cosmetic rewards only — no economy impact.</div>
       </div>
-
-      <!-- BLACKSMITHING -->
-      <div class="guide-card" onclick="openGuide('blacksmith')" style="cursor:pointer">
-        <div class="guide-header">
-          <div class="guide-icon">⚒️</div>
-          <div class="guide-meta">
-            <h4>Blacksmithing General Guide</h4>
-            <div class="guide-meta-row">
-              <span class="guide-cat-tag">Skilling</span>
-              <span>By Ninia</span>
-            </div>
-          </div>
-          <div class="guide-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </div>
-        </div>
+      <div class="zone-card">
+        <div class="zone-title">⚡ Soul Wars</div>
+        <div class="zone-desc">Large-scale team PvP combined with PvE. Resource gathering mid-fight creates deep strategic choices.</div>
       </div>
-
-    </div><!-- /written-guides -->
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<!-- ── VIDEO MODAL ── -->
-<div class="video-modal-backdrop" id="videoModalBackdrop" onclick="handleVideoBackdropClick(event)">
-  <div class="video-modal" id="videoModal">
-    <div class="video-modal-header">
-      <div class="vm-cat video-cat-badge" id="vmCat"></div>
-      <div class="video-modal-title" id="vmTitle"></div>
-      <div class="video-modal-meta" id="vmDate"></div>
-      <div class="video-modal-close" onclick="closeVideo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      <div class="zone-card">
+        <div class="zone-title">🏆 Ranked Duels</div>
+        <div class="zone-desc">A seasonal ELO ladder for 1v1 combat. Top players earn prestigious cosmetics and profile badges.</div>
       </div>
     </div>
-    <div class="video-embed">
-      <iframe id="videoIframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-    </div>
-    <div class="video-modal-footer">
-      <div class="video-modal-desc" id="vmDesc"></div>
-      <a class="yt-link" id="vmYtLink" href="#" target="_blank">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.4 2.8-5.4 2.7z"/></svg>
-        Open on YouTube
-      </a>
-    </div>
-  </div>
-</div>
 
-<!-- ── GUIDE MODAL ── -->
-<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-icon" id="modalIcon"></div>
-      <div class="modal-title">
-        <h3 id="modalTitle"></h3>
-        <div class="modal-by" id="modalBy"></div>
+    <div class="sub-h">PvP Rewards</div>
+    <p>All PvP rewards are cosmetic or convenience-based — never pay-to-win or stat-dominant. This keeps PvP desirable without making it mandatory for PvE progression. Blood Shards drop in the Wilderness and are exchanged for exclusive cosmetics at the Wilderness Exchange.</p>
+  </section>
+
+  <!-- ── 5. ECONOMY ── -->
+  <section class="section" id="economy">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Player Economy & Market</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <p>The economy is entirely player-driven. The game does not sell items obtainable through play. NPC shops exist only for base-tier commodities (empty vials, basic tools) and act as a price floor, never a ceiling.</p>
+
+    <div class="sub-h">The Grand Exchange</div>
+    <p>The Grand Exchange (GE) is a centralised asynchronous marketplace. Players list buy and sell orders and the system matches them automatically — no need to stand in a trading hub.</p>
+    <ul class="item-list">
+      <li><strong>Live Pricing</strong> — Price history graphs are available in-game and via a public API for third-party tools</li>
+      <li><strong>Volume Limits</strong> — Each item has a 4-hour buy limit to prevent market cornering; limits are generous for common items</li>
+      <li><strong>Offline Trading</strong> — Orders execute while offline; items and coin wait in the GE collection box</li>
+      <li><strong>Market Alerts</strong> — Set price targets and receive a notification when they are reached</li>
+    </ul>
+
+    <div class="sub-h">Direct Trade & Player Shops</div>
+    <ul class="item-list">
+      <li><strong>Direct Trade</strong> — Face-to-face trade windows with a double-confirm screen and GE reference prices to prevent scamming</li>
+      <li><strong>Player-Owned Shops</strong> — Construction level 60 unlocks a personal shop visible on the world map; a 1% listing fee maintains balance</li>
+    </ul>
+
+    <div class="sub-h">Gold Sinks</div>
+    <p>A healthy economy requires robust gold sinks to counteract inflation from monster drops.</p>
+    <ul class="item-list">
+      <li><strong>Death costs</strong> — Retrieving items after a PvE death incurs a small fee (waived for Ironman accounts)</li>
+      <li><strong>Skill training</strong> — Many artisan skills consume materials that must be bought or gathered</li>
+      <li><strong>Construction</strong> — Building and furnishing a house is expensive, entirely cosmetic — a pure prestige sink</li>
+      <li><strong>Cosmetic upgrades</strong> — Recolours, transmog tokens, and effect unlocks are purchased with gold at in-game vendors</li>
+      <li><strong>GE transaction tax</strong> — A 0.5% fee on all GE trades is burned from the economy permanently</li>
+    </ul>
+  </section>
+
+  <!-- ── 6. BONDS ── -->
+  <section class="section" id="bonds">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Bonds</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="callout">Bonds are the primary mechanism for ensuring Elderstone remains free of illicit real-money trading (RMT) while giving both paying and free players a fair path forward.</div>
+
+    <div class="sub-h">What Is a Bond?</div>
+    <p>A Bond is an in-game item that can be purchased from the official store with real money, or bought from other players on the Grand Exchange for in-game gold. Once used, a Bond grants 14 days of Premium Membership.</p>
+
+    <div class="sub-h">How Bonds Kill RMT</div>
+
+    <div class="bond-flow">
+      <div class="bond-node">Player wants<br/>in-game gold</div>
+      <div class="bond-arrow">→</div>
+      <div class="bond-node">Buys a Bond<br/>from official store</div>
+      <div class="bond-arrow">→</div>
+      <div class="bond-node">Sells Bond on<br/>Grand Exchange</div>
+    </div>
+
+    <ul class="item-list">
+      <li><strong>Legal alternative</strong> — No need to visit a shady website. The official route is competitive and safe</li>
+      <li><strong>Seller protection</strong> — Players selling Bonds for gold are conducting a fully sanctioned transaction — no ban risk</li>
+      <li><strong>Price discovery</strong> — The GE Bond price reflects the true real-money-to-gold rate; publicly visible and stable</li>
+      <li><strong>No middlemen</strong> — The official Bond rate undercuts black market sellers, collapsing the incentive to use them</li>
+    </ul>
+
+    <div class="sub-h">Bond Mechanics</div>
+    <ul class="item-list">
+      <li><strong>Untradeable after use</strong> — Bonds become untradeable once opened, preventing secondary resale fraud</li>
+      <li><strong>Tradeable format</strong> — An unactivated Bond can be gifted or listed on the GE</li>
+      <li><strong>Partial use</strong> — Bonds can pay for individual premium services (extra bank tabs, cosmetic slots) at a prorated cost</li>
+      <li><strong>No P2W</strong> — Bonds only grant Membership and cosmetic access. Never combat stats, XP boosts, or best-in-slot gear</li>
+    </ul>
+
+    <div class="sub-h">Premium Membership Benefits</div>
+    <ul class="item-list">
+      <li><strong>Extra skills</strong> — Members unlock the full 28-skill roster; free players access 14 core skills</li>
+      <li><strong>Members worlds</strong> — Lower-population, faster-respawn servers</li>
+      <li><strong>Expanded bank</strong> — Free: 200 slots. Members: 800 slots, with further tabs purchasable via Bonds</li>
+      <li><strong>More quests</strong> — Main quest line is free; member quests offer the richest story and unique rewards</li>
+      <li><strong>Cosmetics wardrobe</strong> — Members store and swap cosmetic overrides without using bank space</li>
+    </ul>
+  </section>
+
+  <!-- ── 7. WORLD ── -->
+  <section class="section" id="world">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>World Design</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="sub-h">Regions</div>
+    <div class="region-list">
+      <div class="region-item">
+        <div class="region-name">Ashenvale Plains</div>
+        <div class="region-desc">The starting region — gentle hills, starter quests, and the main city of Silvergate. Welcoming and safe.</div>
       </div>
-      <div class="modal-close" onclick="closeGuide()">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      <div class="region-item">
+        <div class="region-name">The Ironholds</div>
+        <div class="region-desc">Volcanic mountain range rich in rare ores; home to the Dwarven trade alliance and Master Smithing trainers.</div>
+      </div>
+      <div class="region-item">
+        <div class="region-name">Mirewood Marsh</div>
+        <div class="region-desc">Dense, dangerous swamp full of high-level Slayer creatures and rare Herblore herbs. Hostile terrain rewards preparation.</div>
+      </div>
+      <div class="region-item">
+        <div class="region-name">Crystalspire Coast</div>
+        <div class="region-desc">Coastal cliffs and sea caves; prime Fishing, Hunter, and high-level Agility training. Shipwreck dungeons offshore.</div>
+      </div>
+      <div class="region-item">
+        <div class="region-name">The Deep Wilds</div>
+        <div class="region-desc">The Wilderness — northern tundra scarred by ancient magic. PvP-enabled. Highest risk, highest reward in the game.</div>
+      </div>
+      <div class="region-item">
+        <div class="region-name">Underhollow</div>
+        <div class="region-desc">A vast cave network for Dungeoneering — procedurally generated co-op floors. Every run is different.</div>
       </div>
     </div>
-    <div class="modal-body" id="modalBody"></div>
-  </div>
-</div>
+
+    <div class="sub-h">World Events</div>
+    <ul class="item-list">
+      <li><strong>Seasonal Festivals</strong> — Four per year tied to the in-game calendar; unique cosmetics, skill boosts, and event quests</li>
+      <li><strong>Invasions</strong> — Random enemy waves attack cities; players band together to defend, earning event currency</li>
+      <li><strong>World Bosses</strong> — Rare server-wide boss spawns announced in advance; require mass co-ordination and reward unique drops</li>
+      <li><strong>Player Milestones</strong> — When the server collectively reaches a skill milestone, a world bonus activates for all players</li>
+    </ul>
+
+    <div class="sub-h">Player Housing</div>
+    <p>Player-Owned Houses (Construction skill) are personal instanced spaces. Players build and furnish rooms that provide functional benefits — altars, forges, dungeon portals — and cosmetic expression. Houses can be set to public, friends-only, or private.</p>
+  </section>
+
+  <!-- ── 8. QUESTS ── -->
+  <section class="section" id="quests">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Quests & Narrative</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <p>Quests are the primary vehicle for world-building, lore, and unique rewards. They are never required for skill training but always offer the best introduction to content areas.</p>
+    <ul class="item-list">
+      <li><strong>Novice Quests</strong> — Short, accessible; teach core systems; reward starter gear and XP</li>
+      <li><strong>Journeyman Quests</strong> — Multi-stage; involve multiple skills and areas; deepen the world's lore</li>
+      <li><strong>Master Quests</strong> — Rare, long-form stories requiring high skill levels; reward unique items and unlock endgame areas</li>
+      <li><strong>World Quests</strong> — Server-wide story arcs that unfold over a season; outcomes shaped by collective player choices</li>
+    </ul>
+  </section>
+
+  <!-- ── 9. MONETISATION ── -->
+  <section class="section" id="monetisation">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Monetisation</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="callout">Every item that affects gameplay must be earnable in-game. Real money buys convenience and cosmetics only.</div>
+
+    <div class="mono-split">
+      <div class="mono-col yes">
+        <div class="mono-head">What We Sell</div>
+        <ul class="mono-list">
+          <li>Bonds (Premium Membership)</li>
+          <li>Cosmetic outfits & pets</li>
+          <li>Mount skins & particle effects</li>
+          <li>Name changes</li>
+          <li>Bank tab expansions (via Bonds only)</li>
+        </ul>
+      </div>
+      <div class="mono-col no">
+        <div class="mono-head">Never Sold</div>
+        <ul class="mono-list">
+          <li>XP boosts of any kind</li>
+          <li>Stat-bearing gear or weapons</li>
+          <li>Drop rate modifiers</li>
+          <li>Pay-to-win combat advantages</li>
+          <li>Anything only obtainable with cash</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 10. ANTI-CHEAT ── -->
+  <section class="section" id="anticheat">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Anti-Cheat & Fair Play</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <ul class="item-list">
+      <li><strong>Botting Detection</strong> — Behavioural telemetry flags inhuman click patterns and repetitive action sequences; flagged accounts are investigated before action is taken</li>
+      <li><strong>Gold Seller Interdiction</strong> — Suspicious bulk gold transfers between unlinked accounts are rate-limited and reviewed</li>
+      <li><strong>Ironman Mode</strong> — Optional self-sufficiency mode that disables GE access and direct trade; for players who want a pure solo economy</li>
+      <li><strong>Hardcore Ironman</strong> — Ironman with permanent death; a separate, respected leaderboard</li>
+      <li><strong>Appeals Process</strong> — Every ban can be appealed through a transparent ticket system with a human review stage</li>
+    </ul>
+
+    <div class="sub-h">Accessibility</div>
+    <ul class="item-list">
+      <li><strong>Colourblind Modes</strong> — Protanopia, Deuteranopia, and Tritanopia presets for all UI elements</li>
+      <li><strong>Input Remapping</strong> — Full keyboard and controller remapping; mouse-only and keyboard-only play both supported</li>
+      <li><strong>UI Scaling</strong> — All UI elements scale independently from 75% to 200%</li>
+      <li><strong>Screen Reader</strong> — Chatbox, GE prices, and skill levels output to system accessibility APIs</li>
+      <li><strong>Subtitles</strong> — All voiced dialogue and tutorial narration has full subtitles</li>
+    </ul>
+  </section>
+
+  <!-- ── 11. ROADMAP ── -->
+  <section class="section" id="roadmap">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <h2>Development Roadmap</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="roadmap">
+      <div class="phase">
+        <div class="phase-title">Phase 1 — Foundations (Alpha)</div>
+        <ul class="item-list">
+          <li>Core engine — world renderer, networking, server-side tick system</li>
+          <li>14 free skills — combat cluster plus primary gathering and artisan skills</li>
+          <li>Ashenvale Plains + The Ironholds — two full regions with quests, NPCs, and resource areas</li>
+          <li>Basic Grand Exchange — buy/sell orders and price history</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-title">Phase 2 — Beta</div>
+        <ul class="item-list">
+          <li>Full 28-skill roster — all member skills implemented and balanced</li>
+          <li>Wilderness & PvP systems — opt-in PvP, Duel Arena, Castle Wars</li>
+          <li>Bonds system — full integration with storefront and Grand Exchange</li>
+          <li>Player Housing — rooms, furniture, public listing via Construction</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-title">Phase 3 — Launch & Beyond</div>
+        <ul class="item-list">
+          <li>All 6 regions live — full world accessible to all players</li>
+          <li>World Events — seasonal festivals, invasions, world bosses</li>
+          <li>Dungeoneering — procedural floors with co-op matchmaking</li>
+          <li>Mobile companion app — market access, inventory, and chat</li>
+          <li>Ongoing quarterly updates — new quests, skill expansions, cosmetic seasons</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 12. APPENDIX ── -->
+  <section class="section" id="appendix">
+    <div class="section-header">
+      <span class="section-num">12</span>
+      <h2>Appendix: Key Design Decisions</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="appendix-block">
+      <div class="appendix-q">Why Opt-In PvP?</div>
+      <p>Forced open-world PvP creates a hostile new-player experience and drives away a large segment of the potential audience. By confining PvP to the Wilderness (consent-at-the-border) and dedicated arenas, we preserve the thrill of player-versus-player combat while guaranteeing that every other player in the world is a collaborator, not a threat. The rewards inside PvP zones are sufficient to make it highly compelling for those who seek it.</p>
+    </div>
+
+    <div class="appendix-block">
+      <div class="appendix-q">Why Bonds Instead of a Direct Gold Shop?</div>
+      <p>Selling gold directly creates an infinite inflation vector and removes the need for gathering skills. Bonds instead monetise time — a player with less time can convert real money to membership or gold via the Bond market, while a player with more time can convert gameplay effort into membership by selling Bonds they earned through play. Both players are served; the economy remains player-driven.</p>
+    </div>
+
+    <div class="appendix-block">
+      <div class="appendix-q">Why 28 Skills?</div>
+      <p>28 skills provides a vast progression space without redundancy. Each skill occupies a unique mechanical niche. The breadth ensures that every playstyle — combat specialist, master crafter, explorer, social trader — has deep and rewarding progression. A player who never swings a sword can still reach an impressive total level and earn genuine respect on the leaderboards.</p>
+    </div>
+  </section>
+
+</main>
 
 <footer>
-  <div class="footer-logo">Heartwood Guides</div>
-  <div>Community crafted · Not affiliated with Heartwood Online</div>
-  <div style="display:flex;gap:16px">
-    <a href="https://discord.gg/cRA8Xm2zD2" target="_blank">Discord</a>
-    <a href="https://heartwoodonline.com" target="_blank">Play</a>
-    <a href="https://heartwoodatlas.com" target="_blank">Atlas</a>
-  </div>
+  <strong>Realm of Elderstone</strong> &nbsp;◆&nbsp; Game Design Document v1.0 &nbsp;◆&nbsp; Confidential Draft
 </footer>
 
+</div><!-- /site-wrap -->
+
 <script>
-  // ── VIDEO MODAL ──
-  const catLabels = { combat: 'Combat', money: 'Money', skilling: 'Skilling', guide: 'Guide' };
-  const catClasses = { combat: 'cat-combat', money: 'cat-money', skilling: 'cat-skilling', guide: 'cat-guide' };
+// ── SKILL DATA ──
+const skills = [
+  { name:"Attack",       cat:"Combat",    desc:"Increases melee accuracy; unlocks weapon tiers" },
+  { name:"Strength",     cat:"Combat",    desc:"Increases melee damage and maximum hit" },
+  { name:"Defence",      cat:"Combat",    desc:"Reduces damage taken; unlocks armour tiers" },
+  { name:"Ranged",       cat:"Combat",    desc:"Trains bows, crossbows, and thrown weapons" },
+  { name:"Magic",        cat:"Combat",    desc:"Cast spells, enchant items, and teleport across the world" },
+  { name:"Prayer",       cat:"Combat",    desc:"Temporary divine blessings; recharged at altars" },
+  { name:"Summoning",    cat:"Combat",    desc:"Bind spirit familiars to fight alongside or carry items" },
+  { name:"Hitpoints",    cat:"Combat",    desc:"Base health pool; grows passively through all combat" },
+  { name:"Woodcutting",  cat:"Gathering", desc:"Chop trees for logs used in Fletching and Firemaking" },
+  { name:"Mining",       cat:"Gathering", desc:"Extract ores and gems from rock faces worldwide" },
+  { name:"Fishing",      cat:"Gathering", desc:"Catch fish for Cooking; rare drops include ancient relics" },
+  { name:"Farming",      cat:"Gathering", desc:"Grow crops, herbs, trees, and bushes on allotment patches" },
+  { name:"Hunter",       cat:"Gathering", desc:"Set traps and track creatures for exotic materials" },
+  { name:"Foraging",     cat:"Gathering", desc:"Gather wild plants, mushrooms, and insects in the open world" },
+  { name:"Smithing",     cat:"Artisan",   desc:"Smelt ores into bars; forge weapons and armour" },
+  { name:"Crafting",     cat:"Artisan",   desc:"Create leather goods, jewellery, pottery, and glass" },
+  { name:"Fletching",    cat:"Artisan",   desc:"Craft bows, arrows, bolts, and javelins from wood and feathers" },
+  { name:"Herblore",     cat:"Artisan",   desc:"Brew potions from herbs; create poisons and antidotes" },
+  { name:"Cooking",      cat:"Artisan",   desc:"Prepare food for healing; master recipes provide powerful buffs" },
+  { name:"Firemaking",   cat:"Artisan",   desc:"Light fires and lanterns; unlock bonfires and signal beacons" },
+  { name:"Construction", cat:"Artisan",   desc:"Build and furnish a player-owned house with rooms and features" },
+  { name:"Runecrafting", cat:"Artisan",   desc:"Craft runes from essence; required for the rarest spells" },
+  { name:"Thieving",     cat:"Support",   desc:"Pickpocket NPCs, loot stalls, and crack safes for coin and loot" },
+  { name:"Slayer",       cat:"Support",   desc:"Complete monster contracts for powerful unique drops" },
+  { name:"Agility",      cat:"Support",   desc:"Traverse shortcuts; restore run energy faster" },
+  { name:"Dungeoneering",cat:"Support",   desc:"Explore procedural underground floors with other players" },
+  { name:"Cartography",  cat:"Support",   desc:"Map the world; reveal hidden areas and fast-travel nodes" },
+  { name:"Lore",         cat:"Support",   desc:"Study ancient tomes and ruins for story content and buffs" },
+];
 
-  function openVideo(id, title, cat, desc, date) {
-    document.getElementById('vmTitle').textContent = title;
-    document.getElementById('vmDate').textContent = date;
-    document.getElementById('vmDesc').textContent = desc;
-    const catEl = document.getElementById('vmCat');
-    catEl.textContent = catLabels[cat] || cat;
-    catEl.className = 'vm-cat video-cat-badge ' + (catClasses[cat] || '');
-    document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-    document.getElementById('vmYtLink').href = `https://www.youtube.com/watch?v=${id}`;
-    document.getElementById('videoModalBackdrop').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+const catClass = { Combat:'cat-combat', Gathering:'cat-gathering', Artisan:'cat-artisan', Support:'cat-support' };
 
-  function closeVideo() {
-    document.getElementById('videoModalBackdrop').classList.remove('open');
-    document.getElementById('videoIframe').src = ''; // stop playback
-    document.body.style.overflow = '';
-  }
+const grid = document.getElementById('skillsGrid');
+skills.forEach(s => {
+  const card = document.createElement('div');
+  card.className = 'skill-card';
+  card.innerHTML = `<div class="skill-name">${s.name}</div><div class="skill-cat ${catClass[s.cat]}">${s.cat}</div><div class="skill-desc">${s.desc}</div>`;
+  grid.appendChild(card);
+});
 
-  function handleVideoBackdropClick(e) {
-    if (e.target === document.getElementById('videoModalBackdrop')) closeVideo();
-  }
-  const guides = {
-    carpentry: {
-      icon: '🪚',
-      title: 'Carpentry General Guide',
-      by: 'By <span>Ninia</span>',
-      html: `
-        <h5>Levelling Path</h5>
-        <table>
-          <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr><td>Oak Boards / Oak Buckler</td><td>5</td><td></td></tr>
-            <tr><td>Pine Boards</td><td>10</td><td>Hoard until bucklers</td></tr>
-            <tr><td>Pine Buckler</td><td>15</td><td></td></tr>
-            <tr><td>Birch Boards</td><td>20</td><td>Hoard until bucklers</td></tr>
-            <tr><td>Birch Buckler</td><td>25</td><td></td></tr>
-            <tr><td>Maple Boards</td><td>30</td><td>Hoard until bucklers</td></tr>
-            <tr><td>Maple Buckler</td><td>35</td><td></td></tr>
-            <tr><td>Mandrove Boards</td><td>40</td><td>Hoard until bucklers</td></tr>
-            <tr><td>Mandrove Buckler</td><td>45</td><td></td></tr>
-            <tr><td>Mandrove Boards / Buckler</td><td>50</td><td></td></tr>
-            <tr><td>Mandrove Buckler</td><td>55–56</td><td></td></tr>
-            <tr><td>HC Sparkling Lasher · Pearl Wand · Shiny Scale Shield</td><td>61</td><td></td></tr>
-          </tbody>
-        </table>
-        <div class="guide-tip">💡 Hoard all boards rather than selling — you'll need them to craft the bucklers at the next tier.</div>
-        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/carpentry" target="_blank">🗺️ Heartwood Atlas — Carpentry ↗</a>
-      `
-    },
-    leather: {
-      icon: '🧵',
-      title: 'Leatherworking Guide',
-      by: 'By <span>Akor</span>',
-      html: `
-        <h5>Getting Started</h5>
-        <p>If you're a fresh Rogue, keep every <strong>Rodent Pelt</strong> and <strong>Soft Hide</strong> you find. At <strong>character level 12</strong> you can begin Leatherworking — craft everything into Flimsy Leather until level 5, then start making armour.</p>
-        <h5>Levels 1–5 · Flimsy Leather</h5>
-        <table>
-          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
-          <tbody>
-            <tr><td>Flimsy Leather</td><td>2 Rodent Pelts</td></tr>
-            <tr><td>Flimsy Coat</td><td>15 Flimsy Leather · 1 Thread</td></tr>
-            <tr><td>Flimsy Striders</td><td>12 Flimsy Leather · 1 Thread</td></tr>
-            <tr><td>Flimsy Boots</td><td>10 Flimsy Leather · 1 Thread</td></tr>
-          </tbody>
-        </table>
-        <p>Thread is crafted at the Tailoring Station (6 Cotton each) — it sits right next to Leatherworking.</p>
-        <h5>Levels 5–15 · Plush Leather</h5>
-        <table>
-          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
-          <tbody>
-            <tr><td>Plush Leather</td><td>2 Rodent Pelts · 1 Soft Hide</td></tr>
-            <tr><td>Plush Coat</td><td>15 Plush Leather · 2 Thread</td></tr>
-            <tr><td>Plush Boots</td><td>10 Plush Leather · 1 Thread</td></tr>
-          </tbody>
-        </table>
-        <h5>Levels 15–31 · Bone Dust</h5>
-        <p>Bone Dust is the bottleneck. From level 15, hoard every Bone. Farming skeletons above the <strong>West Tunnel entrance</strong> is efficient.</p>
-        <ul>
-          <li><strong>Option A:</strong> Grind Fragile Leather to 20, then Delicate Leather to 30.</li>
-          <li><strong>Option B:</strong> Grind Bone Dust until it stops giving XP (~level 31–35). Slower upfront but saves effort later.</li>
-        </ul>
-        <div class="guide-tip">💡 Option B is recommended — one material, and you can farm Lumins at the same time.</div>
-        <h5>Levels 35–45 · Graceful Leather</h5>
-        <table>
-          <thead><tr><th>Item</th><th>Materials</th></tr></thead>
-          <tbody>
-            <tr><td>Graceful Leather</td><td>2 Medium Hide · 1 Bone Dust</td></tr>
-            <tr><td>Graceful Coat</td><td>15 Graceful Leather · 3 Heavy Leather Cord</td></tr>
-            <tr><td>Graceful Striders</td><td>12 Graceful Leather · 2 Heavy Leather Cord</td></tr>
-            <tr><td>Graceful Boots</td><td>10 Graceful Leather · 1 Light Leather Cord</td></tr>
-          </tbody>
-        </table>
-        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/leatherworking" target="_blank">🗺️ Heartwood Atlas — Leatherworking ↗</a>
-      `
-    },
-    blacksmith: {
-      icon: '⚒️',
-      title: 'Blacksmithing General Guide',
-      by: 'By <span>Ninia</span>',
-      html: `
-        <h5>Levelling Path</h5>
-        <table>
-          <thead><tr><th>Item</th><th>Level</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr><td>Tin Bar / Tin Sword</td><td>5</td><td></td></tr>
-            <tr><td>Copper Bar / Copper Sword</td><td>10</td><td></td></tr>
-            <tr><td>Iron Bar / Iron Polearm</td><td>15</td><td></td></tr>
-            <tr><td>Steel Bar</td><td>20</td><td>Hoard until polearms</td></tr>
-            <tr><td>Steel Polearm</td><td>25</td><td></td></tr>
-            <tr><td>Tungsten Bar</td><td>30</td><td>Hoard until polearms</td></tr>
-            <tr><td>Tungsten Polearm</td><td>35</td><td></td></tr>
-            <tr><td>Platinum Bar</td><td>40</td><td>Hoard until polearms</td></tr>
-            <tr><td>Platinum Polearm</td><td>45</td><td></td></tr>
-            <tr><td>Platinum Bar / Polearm</td><td>50</td><td></td></tr>
-            <tr><td>Platinum Polearm</td><td>55–56</td><td></td></tr>
-            <tr><td>HC Stonescale Brutalizer · Barbed Chakram · Hardened Scale Shield</td><td>61</td><td></td></tr>
-          </tbody>
-        </table>
-        <div class="guide-tip">💡 Hoard all bars rather than selling — you'll need them to craft the polearms at the next tier.</div>
-        <a class="atlas-link" href="https://heartwoodatlas.com/en/home/crafting/blacksmithing" target="_blank">🗺️ Heartwood Atlas — Blacksmithing ↗</a>
-      `
-    }
-  };
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.06 });
 
-  function openGuide(id) {
-    const g = guides[id];
-    document.getElementById('modalIcon').textContent = g.icon;
-    document.getElementById('modalTitle').textContent = g.title;
-    document.getElementById('modalBy').innerHTML = g.by;
-    document.getElementById('modalBody').innerHTML = g.html;
-    document.getElementById('modalBackdrop').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeGuide() {
-    document.getElementById('modalBackdrop').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function handleBackdropClick(e) {
-    if (e.target === document.getElementById('modalBackdrop')) closeGuide();
-  }
-
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo(); closeGuide(); } });
-
-  // ── FILTER + SEARCH ──
-  let activeFilter = 'all';
-
-  document.querySelectorAll('.filter-tab, .sidebar-nav a[data-filter]').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      activeFilter = el.dataset.filter;
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.sidebar-nav a[data-filter]').forEach(a => a.classList.remove('active'));
-      document.querySelectorAll(`[data-filter="${activeFilter}"]`).forEach(t => {
-        if (t.tagName === 'BUTTON' || t.tagName === 'A') t.classList.add('active');
-      });
-      applyFilters();
-    });
-  });
-
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-  function applyFilters() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.querySelectorAll('.video-grid .video-card');
-    let visible = 0;
-    cards.forEach(card => {
-      const cat = card.dataset.cat;
-      const title = card.dataset.title.toLowerCase();
-      const matchCat = activeFilter === 'all' || cat === activeFilter;
-      const matchQ = !q || title.includes(q);
-      if (matchCat && matchQ) { card.classList.remove('hidden'); visible++; }
-      else card.classList.add('hidden');
-    });
-    document.getElementById('videoCount').textContent = visible;
-  }
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
 </script>
 </body>
 </html>
